@@ -1,0 +1,1228 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestor de Inventario · Fabricación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+:root{--bg:#f3f4f1;--panel:#fff;--panel2:#f8f9f6;--ink:#1c2220;--mute:#69726d;--line:#dde2db;--acc:#0f766e;--acc-ink:#fff;--acc-soft:#dff0ec;--ok:#15803d;--ok-soft:#e2f3e6;--warn:#b45309;--warn-soft:#fbefdb;--bad:#b91c1c;--bad-soft:#fbe3e1;--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05);--r:10px;--mono:'IBM Plex Mono',ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#111412;--panel:#191d1a;--panel2:#1f2420;--ink:#e5eae6;--mute:#97a19b;--line:#2c322e;--acc:#2dd4bf;--acc-ink:#062a26;--acc-soft:#16372f;--ok:#4ade80;--ok-soft:#17311f;--warn:#fbbf24;--warn-soft:#382c12;--bad:#f87171;--bad-soft:#3b1b1b;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25)}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 'IBM Plex Sans',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+.mono{font-family:var(--mono)}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0;font-weight:600}
+h2{font-size:20px}h3{font-size:15px}
+.sp{flex:1}
+.hide{display:none!important}
+/* header */
+.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 16px;height:56px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
+.brand .mk{width:26px;height:26px;border-radius:7px;background:var(--acc);display:grid;place-items:center;color:var(--acc-ink)}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:0;background:none;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--mute);font-weight:500;white-space:nowrap}
+.tab:hover{background:var(--panel2);color:var(--ink)}
+.tab.on{background:var(--acc-soft);color:var(--acc)}
+.conn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute);white-space:nowrap}
+.conn i{width:8px;height:8px;border-radius:50%;background:var(--bad)}
+.conn.on i{background:var(--ok)}
+.umenu{position:relative}
+.umenu summary{list-style:none;cursor:pointer;width:32px;height:32px;border-radius:50%;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;font-weight:600;overflow:hidden}
+.umenu summary::-webkit-details-marker{display:none}
+.umenu summary img{width:100%;height:100%;object-fit:cover}
+.umenu .dd{position:absolute;right:0;top:40px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:230px;padding:6px;z-index:30}
+.dd .who{padding:8px 10px;font-size:12px;color:var(--mute);border-bottom:1px solid var(--line);margin-bottom:4px;word-break:break-all}
+.dd button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:7px;cursor:pointer}
+.dd button:hover{background:var(--panel2)}
+/* layout */
+main{max-width:1400px;margin:0 auto;padding:18px 16px 60px}
+.view{display:none}.view.on{display:block}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.inp,select.inp,textarea.inp{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;outline:none}
+.inp:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.search{flex:1 1 220px;max-width:380px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--panel2)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn.ghost{background:none;border-color:transparent}
+.btn.ghost:hover{background:var(--panel2)}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:5px 9px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13px}
+.chip.on{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.segtabs{display:inline-flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;max-width:100%;overflow-x:auto}
+.segtabs button{border:0;background:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-weight:500;color:var(--mute);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.segtabs button.on{background:var(--acc-soft);color:var(--acc)}
+.item.pt{border-left:3px solid var(--acc)}
+.item.dim{opacity:.55}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.stat b{display:block;font-family:var(--mono);font-size:22px;font-weight:600}
+.stat span{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px}
+.stat.warn b{color:var(--warn)}.stat.bad b{color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card.pad{padding:16px}
+.item{display:flex;flex-direction:column;overflow:hidden;cursor:pointer;transition:transform .12s,border-color .12s}
+.item:hover{border-color:var(--acc);transform:translateY(-1px)}
+.thumb{aspect-ratio:4/3;background:var(--panel2);display:grid;place-items:center;overflow:hidden;position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.noimg::after{content:"";width:38px;height:38px;opacity:.35;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M21 8 12 3 3 8v8l9 5 9-5z'/%3E%3Cpath d='m3 8 9 5 9-5M12 13v8'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M21 8 12 3 3 8v8l9 5 9-5z'/%3E%3Cpath d='m3 8 9 5 9-5M12 13v8'/%3E%3C/svg%3E") center/contain no-repeat;color:var(--mute)}
+.item .body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.nm{font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+.meta{font-size:12px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:6px}
+.stk{font-family:var(--mono);font-weight:600;font-size:16px}
+.stk.warn{color:var(--warn)}.stk.bad{color:var(--bad)}
+.qa{display:flex;gap:4px;margin-left:auto}
+.qa button{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-weight:600;font-size:16px;line-height:1}
+.qa button:hover{border-color:var(--acc);color:var(--acc)}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--panel2);color:var(--mute);letter-spacing:.3px;white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}.badge.warn{background:var(--warn-soft);color:var(--warn)}.badge.bad{background:var(--bad-soft);color:var(--bad)}.badge.acc{background:var(--acc-soft);color:var(--acc)}
+.cap{display:flex;align-items:baseline;gap:6px;margin-top:6px}
+.cap b{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--acc)}
+.cap b.zero{color:var(--bad)}
+.lim{font-size:12px;color:var(--mute)}
+.lim em{font-style:normal;color:var(--bad);font-weight:500}
+.empty{padding:50px 20px;text-align:center;color:var(--mute);grid-column:1/-1}
+/* detail */
+.dethead{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+.detgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:14px;align-items:start}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.sechead{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.info{display:grid;grid-template-columns:120px 1fr;gap:14px}
+.info .thumb{aspect-ratio:1;border-radius:8px}
+.kv{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.kv div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.kv span{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}
+.kv b{font-family:var(--mono);font-weight:600}
+.tblwrap{overflow-x:auto;max-width:100%}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-weight:500;color:var(--mute);font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl td.n,.tbl th.n{text-align:right;font-family:var(--mono);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .mini{width:34px;height:34px;border-radius:6px;aspect-ratio:auto}
+.tbl .mini.noimg::after{width:18px;height:18px}
+.tbl input.inp{width:86px;padding:5px 7px;text-align:right;font-family:var(--mono)}
+.tbl tr.bad td{background:var(--bad-soft)}
+.tbl tr.warn td{background:var(--warn-soft)}
+.diagbox{height:520px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden;touch-action:none;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:18px 18px}
+#diag{width:100%;height:100%;display:block;cursor:grab;user-select:none}
+#diag.drag{cursor:grabbing}
+#diag .edge{fill:none;stroke:var(--mute);stroke-opacity:.5;stroke-width:1.4}
+#diag .el{font:500 11px var(--mono);fill:var(--mute)}
+#diag .nb{fill:var(--panel);stroke:var(--line)}
+#diag .node{cursor:pointer}
+#diag .node:hover .nb{stroke:var(--acc)}
+#diag .nt{font:600 12.5px 'IBM Plex Sans',sans-serif;fill:var(--ink)}
+#diag .ns{font:400 10.5px var(--mono);fill:var(--mute)}
+#diag .ph{fill:var(--panel2);stroke:var(--line)}
+#diag .bar.ok{fill:var(--ok)}#diag .bar.warn{fill:var(--warn)}#diag .bar.bad{fill:var(--bad)}#diag .bar.acc{fill:var(--acc)}
+#diag .root .nb{stroke:var(--acc);stroke-width:1.6}
+#diag .lb{fill:var(--bad)}#diag .lt{font:700 9px var(--mono);fill:#fff;letter-spacing:.5px}
+#diag .tg{fill:var(--panel);stroke:var(--acc)}#diag .tgt{font:600 12px var(--mono);fill:var(--acc)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mute);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.inl{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
+.inl input{width:76px;padding:5px 7px}
+.banner{border-radius:8px;padding:10px 12px;margin:10px 0;font-weight:500}
+.banner.ok{background:var(--ok-soft);color:var(--ok)}.banner.bad{background:var(--bad-soft);color:var(--bad)}
+.fabgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld>span{font-size:12px;color:var(--mute);font-weight:500}
+.fld.full{grid-column:1/-1}
+/* dialogs */
+dialog{border:0;border-radius:14px;padding:0;background:var(--panel);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(560px,calc(100vw - 24px));max-height:calc(100vh - 24px)}
+dialog::backdrop{background:rgba(10,14,12,.45)}
+dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
+.dh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.db{padding:16px 18px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.df{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+.imgpick{grid-column:1/-1;display:flex;gap:12px;align-items:center}
+.imgpick .thumb{width:96px;height:96px;aspect-ratio:auto;border-radius:8px;flex:none;border:1px solid var(--line)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;grid-column:1/-1}
+.seg label{flex:1;text-align:center;padding:8px;cursor:pointer;font-weight:500;border-right:1px solid var(--line)}
+.seg label:last-child{border-right:0}
+.seg input{display:none}
+.seg label:has(input:checked){background:var(--acc-soft);color:var(--acc)}
+.pick{grid-column:1/-1;max-height:300px;overflow-y:auto;border:1px solid var(--line);border-radius:8px}
+.pick div{display:flex;align-items:center;gap:10px;padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--line)}
+.pick div:last-child{border-bottom:0}
+.pick div:hover{background:var(--panel2)}
+.pick div.sel{background:var(--acc-soft)}
+.pick .mini{width:30px;height:30px;border-radius:6px;flex:none}
+.pick .mini.noimg::after{width:16px;height:16px}
+.hint{font-size:12px;color:var(--mute);grid-column:1/-1}
+/* gate */
+.gate{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;place-items:center;padding:16px}
+.gate-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:28px;max-width:520px;width:100%}
+.gate-card h1{font-size:22px;margin:12px 0 6px}
+.gate-card p{color:var(--mute);margin:0 0 16px}
+.gate-card code,.gate-card pre{font-family:var(--mono);font-size:12px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 6px}
+.gate-card pre{padding:10px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:calc(100% - 32px)}
+.toast div{background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:9px;box-shadow:var(--shadow);font-weight:500;max-width:520px;animation:tin .2s ease}
+.toast div.bad{background:var(--bad);color:#fff}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}}
+@media (max-width:980px){.detgrid{grid-template-columns:1fr}.diagbox{height:420px}}
+@media (max-width:640px){.top{gap:8px;padding:0 10px}.brand span{display:none}.conn span{display:none}.db{grid-template-columns:1fr}.info{grid-template-columns:84px 1fr}.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}main{padding:14px 16px 60px}}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate"><div class="gate-card" id="gateCard">Cargando…</div></div>
+
+<header class="top">
+  <div class="brand"><div class="mk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div><span>Inventario · Fabricación</span></div>
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-v="inv">Inventario</button>
+    <button class="tab" data-v="prod">Productos</button>
+    <button class="tab" data-v="fab">Fabricar</button>
+    <button class="tab" data-v="mov">Movimientos</button>
+  </nav>
+  <div class="sp"></div>
+  <div class="conn" id="conn"><i></i><span>Sin conexión</span></div>
+  <details class="umenu" id="umenu">
+    <summary id="uav">?</summary>
+    <div class="dd">
+      <div class="who" id="uwho"></div>
+      <button data-m="backup">Respaldar ahora en Drive</button>
+      <button data-m="json">Descargar JSON</button>
+      <button data-m="csvimp">Importar artículos (CSV)</button>
+      <button data-m="csvexp">Exportar inventario (CSV)</button>
+      <button data-m="out">Cerrar sesión</button>
+    </div>
+  </details>
+</header>
+
+<main>
+  <!-- INVENTARIO -->
+  <section class="view on" id="v-inv">
+    <div class="segtabs" id="invSeg">
+      <button class="on" data-s="mat">Materiales <span class="badge" id="segMat"></span></button>
+      <button data-s="pt">Productos terminados <span class="badge acc" id="segPt"></span></button>
+    </div>
+    <div class="stats" id="invStats"></div>
+    <div class="toolbar">
+      <input class="inp search" id="invQ" placeholder="Buscar nombre, SKU, proveedor…">
+      <select class="inp mat-only" id="invCat"><option value="">Todas las categorías</option></select>
+      <select class="inp mat-only" id="invSort">
+        <option value="nombre">Nombre A–Z</option>
+        <option value="stock">Menor stock</option>
+        <option value="categoria">Categoría</option>
+        <option value="reciente">Recientes</option>
+      </select>
+      <button class="chip mat-only" id="invLow">Bajo mínimo</button>
+      <button class="chip pt-only hide" id="ptAll">Incluir sin stock</button>
+      <div class="sp"></div>
+      <button class="btn pri mat-only" id="artNew">+ Artículo</button>
+      <button class="btn pri pt-only hide" id="ptFab">Fabricar</button>
+    </div>
+    <div class="grid" id="invGrid"></div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section class="view" id="v-prod">
+    <div class="toolbar">
+      <input class="inp search" id="prodQ" placeholder="Buscar producto…">
+      <div class="sp"></div>
+      <button class="btn pri" id="prodNew">+ Producto</button>
+    </div>
+    <div class="grid" id="prodGrid"></div>
+  </section>
+
+  <!-- DETALLE PRODUCTO -->
+  <section class="view" id="v-det">
+    <div class="dethead">
+      <button class="btn ghost" id="detBack">← Productos</button>
+      <h2 id="detName"></h2>
+      <div class="sp"></div>
+      <button class="btn" id="detEdit">Editar</button>
+      <button class="btn pri" id="detFab">Fabricar</button>
+      <button class="btn ghost danger" id="detDel">Eliminar</button>
+    </div>
+    <div class="detgrid">
+      <div class="col">
+        <div class="card pad" id="detInfo"></div>
+        <div class="card pad">
+          <div class="sechead"><h3>Lista de materiales</h3><span class="badge" id="bomCount"></span><div class="sp"></div><button class="btn sm pri" id="bomAdd">+ Componente</button></div>
+          <div class="tblwrap"><table class="tbl" id="bomTbl"></table></div>
+        </div>
+      </div>
+      <div class="card pad">
+        <div class="sechead">
+          <h3>Diagrama de materiales</h3>
+          <label class="inl">Para <input class="inp mono" type="number" id="diagN" min="1" step="1" value="1"> und</label>
+          <div class="sp"></div>
+          <button class="btn sm" id="zOut" title="Alejar">−</button>
+          <button class="btn sm" id="zIn" title="Acercar">+</button>
+          <button class="btn sm" id="zFit">Ajustar</button>
+        </div>
+        <div class="diagbox"><svg id="diag" xmlns="http://www.w3.org/2000/svg"></svg></div>
+        <div class="legend"><span><i style="background:var(--ok)"></i>Suficiente</span><span><i style="background:var(--warn)"></i>Queda bajo mínimo</span><span><i style="background:var(--bad)"></i>Faltante</span><span><i style="background:var(--acc)"></i>Subensamble a fabricar</span><span>Clic en ⊕/⊖ para expandir subensambles</span></div>
+        <div id="diagFalt"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FABRICAR -->
+  <section class="view" id="v-fab">
+    <div class="card pad">
+      <div class="fabgrid">
+        <label class="fld"><span>Producto</span><select class="inp" id="fabP"></select></label>
+        <label class="fld"><span>Cantidad a fabricar</span><input class="inp mono" type="number" id="fabN" min="1" step="1" value="1"></label>
+        <div class="fld"><span>&nbsp;</span><button class="btn" id="fabMax">Usar máximo</button></div>
+        <label class="fld full"><span>Nota / lote</span><input class="inp" id="fabNota" placeholder="Ej. Lote OT-2026-014"></label>
+      </div>
+      <div id="fabPlan"></div>
+      <div class="toolbar" style="margin:12px 0 0">
+        <button class="btn" id="fabCsv">Lista de compras (CSV)</button>
+        <div class="sp"></div>
+        <button class="btn pri" id="fabGo">Confirmar fabricación</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOVIMIENTOS -->
+  <section class="view" id="v-mov">
+    <div class="toolbar">
+      <input class="inp search" id="movQ" placeholder="Buscar artículo, usuario, nota…">
+      <select class="inp" id="movT">
+        <option value="">Todos los tipos</option>
+        <option value="entrada">Entrada</option><option value="salida">Salida</option><option value="ajuste">Ajuste</option>
+        <option value="alta">Alta</option><option value="fabricacion">Fabricación</option><option value="consumo">Consumo</option>
+      </select>
+      <div class="sp"></div>
+      <span class="lim">Últimos 500 movimientos</span>
+      <button class="btn" id="movCsv">Exportar CSV</button>
+    </div>
+    <div class="card"><div class="tblwrap"><table class="tbl" id="movTbl"></table></div></div>
+  </section>
+</main>
+
+<!-- Diálogo artículo -->
+<dialog id="dlgArt"><form id="fArt" method="dialog">
+  <div class="dh"><h3 id="artTitle">Artículo</h3><div class="sp"></div><button type="button" class="btn ghost danger sm" id="artDel">Eliminar</button></div>
+  <div class="db">
+    <div class="imgpick">
+      <div class="thumb noimg" id="artImgPrev"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label class="btn sm">Elegir / tomar foto<input type="file" accept="image/*" id="artImg" hidden></label>
+        <button type="button" class="btn sm ghost" id="artImgRm">Quitar imagen</button>
+      </div>
+    </div>
+    <label class="fld full"><span>Nombre *</span><input class="inp" name="nombre" required></label>
+    <label class="fld"><span>SKU / código</span><input class="inp mono" name="sku"></label>
+    <label class="fld"><span>Categoría</span><input class="inp" name="categoria" list="dlCat"></label>
+    <label class="fld"><span>Unidad</span><input class="inp" name="unidad" list="dlUni" value="und"></label>
+    <label class="fld"><span>Stock mínimo</span><input class="inp mono" name="stockMin" type="number" step="any" min="0" value="0"></label>
+    <label class="fld" id="artStockF"><span>Stock inicial</span><input class="inp mono" name="stock" type="number" step="any" min="0" value="0"></label>
+    <label class="fld"><span>Costo unitario</span><input class="inp mono" name="costo" type="number" step="any" min="0" value="0"></label>
+    <label class="fld"><span>Proveedor</span><input class="inp" name="proveedor"></label>
+    <label class="fld"><span>Ubicación</span><input class="inp" name="ubicacion" placeholder="Estante / gaveta"></label>
+    <label class="fld full"><span>Notas</span><textarea class="inp" name="notas" rows="2"></textarea></label>
+  </div>
+  <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri" id="artSave">Guardar</button></div>
+</form></dialog>
+
+<!-- Diálogo producto -->
+<dialog id="dlgProd"><form id="fProd" method="dialog">
+  <div class="dh"><h3 id="prodTitle">Producto</h3></div>
+  <div class="db">
+    <div class="imgpick">
+      <div class="thumb noimg" id="prodImgPrev"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label class="btn sm">Elegir / tomar foto<input type="file" accept="image/*" id="prodImg" hidden></label>
+        <button type="button" class="btn sm ghost" id="prodImgRm">Quitar imagen</button>
+      </div>
+    </div>
+    <label class="fld full"><span>Nombre *</span><input class="inp" name="nombre" required></label>
+    <label class="fld"><span>Código / modelo</span><input class="inp mono" name="codigo"></label>
+    <label class="fld"><span>Categoría</span><input class="inp" name="categoria" placeholder="Producto final, subensamble…"></label>
+    <label class="fld full"><span>Descripción</span><textarea class="inp" name="descripcion" rows="3"></textarea></label>
+    <p class="hint">Un producto puede usarse como componente de otro (subensamble). Su stock de unidades ya armadas se consume antes de fabricar nuevas.</p>
+  </div>
+  <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri" id="prodSave">Guardar</button></div>
+</form></dialog>
+
+<!-- Diálogo componente -->
+<dialog id="dlgComp"><form id="fComp" method="dialog">
+  <div class="dh"><h3>Agregar componente</h3></div>
+  <div class="db">
+    <input class="inp fld full" id="compQ" placeholder="Buscar artículo o subensamble…" style="grid-column:1/-1">
+    <div class="pick" id="compList"></div>
+    <label class="fld"><span>Cantidad por unidad</span><input class="inp mono" id="compN" type="number" step="any" min="0" value="1" required></label>
+    <div class="fld"><span>Seleccionado</span><div id="compSel" class="meta" style="padding:8px 0">—</div></div>
+  </div>
+  <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri" id="compSave">Agregar</button></div>
+</form></dialog>
+
+<!-- Diálogo movimiento -->
+<dialog id="dlgMov"><form id="fMov" method="dialog">
+  <div class="dh"><h3 id="movTitle">Movimiento</h3></div>
+  <div class="db">
+    <div class="seg">
+      <label><input type="radio" name="tipo" value="entrada" checked>Entrada</label>
+      <label><input type="radio" name="tipo" value="salida">Salida</label>
+      <label><input type="radio" name="tipo" value="ajuste">Ajuste</label>
+    </div>
+    <label class="fld"><span id="movNLbl">Cantidad</span><input class="inp mono" name="cant" type="number" step="any" min="0" required></label>
+    <div class="fld"><span>Stock actual → resultante</span><div class="stk" id="movPrev" style="padding:6px 0">—</div></div>
+    <label class="fld full"><span>Nota</span><input class="inp" name="nota" placeholder="Factura, OT, motivo…"></label>
+  </div>
+  <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri" id="movSave">Registrar</button></div>
+</form></dialog>
+
+<!-- Confirmación -->
+<dialog id="dlgOk"><form method="dialog">
+  <div class="dh"><h3 id="okTitle">Confirmar</h3></div>
+  <div class="db" style="display:block" id="okMsg"></div>
+  <div class="df"><button value="no" class="btn ghost">Cancelar</button><button value="si" class="btn pri" id="okBtn">Confirmar</button></div>
+</form></dialog>
+
+<datalist id="dlCat"></datalist>
+<datalist id="dlUni"><option value="und"><option value="m"><option value="cm"><option value="kg"><option value="g"><option value="L"><option value="ml"><option value="par"><option value="rollo"><option value="caja"></datalist>
+<input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN — completar con los datos de tu proyecto Firebase y la
+   URL del Web App de Apps Script (ver LEEME / Code.gs)
+   ===================================================================== */
+const CONFIG = {
+  firebase: {
+    apiKey: "AIzaSyAOgj8QTHDg7YF9qIOYUozfr7pm-MUN0js",
+    authDomain: "sistemadeinventario-465e7.firebaseapp.com",
+    databaseURL: "https://sistemadeinventario-465e7-default-rtdb.firebaseio.com",
+    projectId: "sistemadeinventario-465e7",
+    appId: "1:677732705163:web:0f246c88f9b3ec8dfd858e"
+  },
+  GAS_URL: "https://script.google.com/macros/s/AKfycbwhuDO8fP7XS3b8AW-gXZ_8NwFTV-_YYwimcGsxYK_PFbymMK02mj8Zqg7QQJR-rGs/exec",          // https://script.google.com/macros/s/XXXX/exec
+  MONEDA: "₡",
+  IMG_MAX_PX: 640,      // lado mayor de la imagen comprimida antes de subir
+  IMG_CALIDAD: 0.82
+};
+
+/* ============================ utilidades ============================ */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const r6 = n => Math.round((+n || 0) * 1e6) / 1e6;
+const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isFinite(n) ? n : 0; };
+const fmt = n => (n == null || !isFinite(n)) ? '—' : Number(n).toLocaleString('es-CR', { maximumFractionDigits: 3 });
+const money = n => CONFIG.MONEDA + ' ' + Number(n || 0).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const emailKey = e => String(e || '').toLowerCase().replace(/\./g, ',');
+const thumbUrl = (id, sz = 400) => id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${sz}` : '';
+const IMGERR = `onerror="this.parentNode.classList.add('noimg');this.remove()"`;
+const thumbHTML = (id, cls = 'thumb', sz = 400) => `<div class="${cls}${id ? '' : ' noimg'}">${id ? `<img loading="lazy" src="${thumbUrl(id, sz)}" alt="" ${IMGERR}>` : ''}</div>`;
+const fdate = t => t ? new Date(t).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '';
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const TIPOS = { entrada: ['Entrada', 'ok'], salida: ['Salida', 'warn'], ajuste: ['Ajuste', ''], alta: ['Alta', 'acc'], fabricacion: ['Fabricación', 'acc'], consumo: ['Consumo', 'bad'] };
+
+function toast(msg, cls = '') {
+  const d = document.createElement('div'); d.className = cls; d.textContent = msg;
+  $('#toast').appendChild(d); setTimeout(() => d.remove(), cls === 'bad' ? 6000 : 3200);
+}
+function download(name, text, mime = 'text/plain') {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: mime + ';charset=utf-8' }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function toCSV(rows) {
+  const q = v => { const s = String(v ?? ''); return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  return '\ufeff' + rows.map(r => r.map(q).join(';')).join('\r\n');
+}
+function confirmDlg(title, html, okTxt = 'Confirmar') {
+  return new Promise(res => {
+    const d = $('#dlgOk'); $('#okTitle').textContent = title; $('#okMsg').innerHTML = html; $('#okBtn').textContent = okTxt;
+    d.returnValue = ''; d.onclose = () => res(d.returnValue === 'si'); d.showModal();
+  });
+}
+$$('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+
+/* ============================== estado ============================== */
+const S = {
+  user: null, art: {}, prod: {}, stock: { a: {}, p: {} }, mov: [],
+  loaded: { art: false, prod: false, stock: false },
+  view: 'inv', det: null, nDiag: 1, collapsed: new Set(), vb: null, vbPid: null,
+  invLow: false, invSec: 'mat', ptAll: false, editArt: null, editProd: null, pendImg: null, imgRemove: false,
+  mov: [], movCtx: null, comp: null
+};
+let db, auth;
+const stA = id => +S.stock.a[id] || 0;
+const stP = id => +S.stock.p[id] || 0;
+const nameOf = (t, id) => ((t === 'p' ? S.prod : S.art)[id] || {}).nombre || '(eliminado)';
+const unitOf = id => (S.art[id] || {}).unidad || 'und';
+
+/* ===================== motor de cálculo (BOM) ===================== */
+// Expande la lista de materiales multinivel. Usa primero el stock de subensambles
+// armados y fabrica el resto a partir de sus materiales.
+function plan(pid, n, stock = S.stock) {
+  const pa = Object.assign({}, stock.a || {}), pp = Object.assign({}, stock.p || {});
+  const out = { ok: true, art: {}, falt: {}, use: {}, build: {}, faltP: {}, err: null };
+  const go = (id, m, d) => {
+    if (d > 25) { out.ok = false; out.err = 'Ciclo en la lista de materiales'; return; }
+    const bom = (S.prod[id] && S.prod[id].bom) || {};
+    const ks = Object.keys(bom);
+    if (!ks.length) {
+      out.ok = false;
+      if (d > 0) out.faltP[id] = r6((out.faltP[id] || 0) + m); else out.err = 'El producto no tiene materiales';
+      return;
+    }
+    for (const cid of ks) {
+      const c = bom[cid]; const need = r6(m * (+c.q || 0)); if (need <= 0) continue;
+      if (c.t === 'p') {
+        const have = Math.max(0, +pp[cid] || 0), take = Math.min(have, need);
+        pp[cid] = r6(have - take);
+        if (take > 0) out.use[cid] = r6((out.use[cid] || 0) + take);
+        const rest = r6(need - take);
+        if (rest > 0) { out.build[cid] = r6((out.build[cid] || 0) + rest); go(cid, rest, d + 1); }
+      } else {
+        const have = Math.max(0, +pa[cid] || 0), take = Math.min(have, need);
+        pa[cid] = r6(have - take);
+        out.art[cid] = r6((out.art[cid] || 0) + need);
+        if (need > take) { out.falt[cid] = r6((out.falt[cid] || 0) + need - take); out.ok = false; }
+      }
+    }
+  };
+  go(pid, n, 0);
+  return out;
+}
+let capMemo = new Map();
+function cap(pid) {
+  if (capMemo.has(pid)) return capMemo.get(pid);
+  let c = 0;
+  const bom = (S.prod[pid] || {}).bom;
+  if (bom && Object.keys(bom).length && plan(pid, 1).ok) {
+    let lo = 1, hi = 2;
+    while (hi <= 1e7 && plan(pid, hi).ok) { lo = hi; hi *= 2; }
+    if (hi > 1e7) hi = 1e7 + 1;
+    while (hi - lo > 1) { const m = Math.floor((lo + hi) / 2); if (plan(pid, m).ok) lo = m; else hi = m; }
+    c = lo;
+  }
+  capMemo.set(pid, c); return c;
+}
+function limitantes(pid) {
+  const pl = plan(pid, cap(pid) + 1);
+  return { a: Object.keys(pl.falt), p: Object.keys(pl.faltP) };
+}
+function costUnit(pid, d = 0) {
+  if (d > 25) return 0;
+  const bom = (S.prod[pid] || {}).bom || {}; let s = 0;
+  for (const [cid, c] of Object.entries(bom)) s += (+c.q || 0) * (c.t === 'p' ? costUnit(cid, d + 1) : num((S.art[cid] || {}).costo));
+  return s;
+}
+function wouldCycle(parent, child) {
+  if (parent === child) return true;
+  const seen = new Set(), st = [child];
+  while (st.length) {
+    const x = st.pop(); if (x === parent) return true; if (seen.has(x)) continue; seen.add(x);
+    for (const [cid, c] of Object.entries((S.prod[x] || {}).bom || {})) if (c.t === 'p') st.push(cid);
+  }
+  return false;
+}
+function usedIn(t, id) {
+  return Object.entries(S.prod).filter(([, p]) => p.bom && p.bom[id] && p.bom[id].t === t).map(([pid, p]) => p.nombre || pid);
+}
+
+/* ========================= Apps Script (Drive) ========================= */
+async function gas(action, payload = {}) {
+  if (!CONFIG.GAS_URL) throw new Error('GAS_URL no configurado');
+  const idToken = await S.user.getIdToken();
+  const r = await fetch(CONFIG.GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, idToken, ...payload }) });
+  const j = await r.json().catch(() => ({ ok: false, error: 'Respuesta inválida de Apps Script' }));
+  if (!j.ok) throw new Error(j.error || 'Error en Apps Script');
+  return j;
+}
+async function compress(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Imagen no válida')); i.src = url; });
+    const s = Math.min(1, CONFIG.IMG_MAX_PX / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', CONFIG.IMG_CALIDAD);
+  } finally { URL.revokeObjectURL(url); }
+}
+async function uploadImg(dataUrl, name, oldId) {
+  const [meta, data] = dataUrl.split(',');
+  const mime = (meta.match(/data:(.*?);/) || [])[1] || 'image/jpeg';
+  const safe = String(name || 'img').replace(/[^\w\-]+/g, '_').slice(0, 60) + '.jpg';
+  return (await gas('upload', { data, mime, name: safe, oldId: oldId || null })).id;
+}
+const delImg = id => { if (id) gas('delete', { id }).catch(() => {}); };
+
+/* ============================ movimientos ============================ */
+function logMov(o) {
+  return db.ref('movimientos').push({ ...o, nombre: nameOf(o.rt, o.rid), t: firebase.database.ServerValue.TIMESTAMP, u: S.user.email, nota: o.nota || '' });
+}
+async function movStock(rt, id, tipo, cant, nota) {
+  let antes = 0, despues = 0;
+  const res = await db.ref(`stock/${rt}/${id}`).transaction(cur => {
+    cur = +cur || 0; let nv;
+    if (tipo === 'entrada') nv = r6(cur + cant);
+    else if (tipo === 'salida') { if (cant > cur + 1e-9) return; nv = r6(cur - cant); }
+    else nv = r6(cant);
+    antes = cur; despues = nv; return nv;
+  });
+  if (!res.committed) throw new Error('Stock insuficiente');
+  await logMov({ tipo, rt, rid: id, cant: r6(despues - antes), antes, despues, nota });
+}
+async function fabricar(pid, n, nota) {
+  let pl = null, before = null;
+  const res = await db.ref('stock').transaction(cur => {
+    cur = cur || {};
+    const st = { a: cur.a || {}, p: cur.p || {} };
+    pl = plan(pid, n, st);
+    if (!pl.ok) return;
+    before = { a: { ...st.a }, p: { ...st.p } };
+    const a = { ...st.a }, p = { ...st.p };
+    for (const [id, q] of Object.entries(pl.art)) a[id] = Math.max(0, r6((+a[id] || 0) - q));
+    for (const [id, q] of Object.entries(pl.use)) p[id] = Math.max(0, r6((+p[id] || 0) - q));
+    p[pid] = r6((+p[pid] || 0) + n);
+    return { ...cur, a, p };
+  });
+  if (!res.committed) throw new Error(pl && pl.err ? pl.err : 'Stock insuficiente: otro usuario pudo haber consumido material');
+  const lote = db.ref('movimientos').push().key;
+  const TS = firebase.database.ServerValue.TIMESTAMP, u = S.user.email, up = {};
+  const add = o => { up[db.ref('movimientos').push().key] = { ...o, nombre: nameOf(o.rt, o.rid), t: TS, u, lote, nota: nota || '' }; };
+  const b0 = +before.p[pid] || 0;
+  const subs = Object.entries(pl.build).map(([id, q]) => `${nameOf('p', id)} ×${fmt(q)}`).join(', ');
+  add({ tipo: 'fabricacion', rt: 'p', rid: pid, cant: n, antes: b0, despues: r6(b0 + n), sub: subs || '' });
+  for (const [id, q] of Object.entries(pl.art)) { const b = +before.a[id] || 0; add({ tipo: 'consumo', rt: 'a', rid: id, cant: -q, antes: b, despues: r6(b - q) }); }
+  for (const [id, q] of Object.entries(pl.use)) { const b = +before.p[id] || 0; add({ tipo: 'consumo', rt: 'p', rid: id, cant: -q, antes: b, despues: r6(b - q) }); }
+  await db.ref('movimientos').update(up);
+}
+
+/* ============================== render ============================== */
+let rafId = 0;
+function sched() { if (!rafId) rafId = requestAnimationFrame(() => { rafId = 0; render(); }); }
+function render() {
+  capMemo = new Map();
+  if (!(S.loaded.art && S.loaded.prod && S.loaded.stock)) return;
+  fillCats();
+  if (S.view === 'inv') renderInv();
+  else if (S.view === 'prod') renderProd();
+  else if (S.view === 'det') renderDet();
+  else if (S.view === 'fab') renderFab();
+  else if (S.view === 'mov') renderMov();
+}
+function go(v, det) {
+  S.view = v; if (det !== undefined) S.det = det;
+  $$('.view').forEach(x => x.classList.toggle('on', x.id === 'v-' + v));
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.v === v || (v === 'det' && t.dataset.v === 'prod')));
+  window.scrollTo(0, 0); render();
+}
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) go(b.dataset.v); });
+
+function fillCats() {
+  const cats = [...new Set(Object.values(S.art).map(a => a.categoria).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
+  const sel = $('#invCat'), cur = sel.value;
+  const html = '<option value="">Todas las categorías</option>' + cats.map(c => `<option${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  if (sel.dataset.h !== html) { sel.innerHTML = html; sel.dataset.h = html; }
+  $('#dlCat').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
+}
+function stClass(id) { const s = stA(id), m = num((S.art[id] || {}).stockMin); return s <= 0 ? 'bad' : (m > 0 && s <= m ? 'warn' : ''); }
+
+/* ---- Inventario ---- */
+function renderInv() {
+  const ptIds = Object.keys(S.prod).filter(id => stP(id) > 0);
+  $('#segMat').textContent = Object.keys(S.art).length;
+  $('#segPt').textContent = ptIds.length;
+  const isPt = S.invSec === 'pt';
+  $$('.mat-only').forEach(el => el.classList.toggle('hide', isPt));
+  $$('.pt-only').forEach(el => el.classList.toggle('hide', !isPt));
+  $('#invQ').placeholder = isPt ? 'Buscar producto, código…' : 'Buscar nombre, SKU, proveedor…';
+  if (isPt) return renderPT();
+  const q = norm($('#invQ').value), cat = $('#invCat').value, sort = $('#invSort').value;
+  const all = Object.entries(S.art);
+  let low = 0, zero = 0, val = 0;
+  for (const [id, a] of all) { const c = stClass(id); if (c === 'warn') low++; if (c === 'bad') zero++; val += stA(id) * num(a.costo); }
+  $('#invStats').innerHTML = `
+    <div class="stat"><b>${all.length}</b><span>Artículos</span></div>
+    <div class="stat warn"><b>${low}</b><span>Bajo mínimo</span></div>
+    <div class="stat bad"><b>${zero}</b><span>Sin stock</span></div>
+    <div class="stat"><b>${money(val)}</b><span>Valor inventario</span></div>`;
+  let list = all.filter(([id, a]) => {
+    if (cat && a.categoria !== cat) return false;
+    if (S.invLow && !stClass(id)) return false;
+    return !q || norm([a.nombre, a.sku, a.proveedor, a.categoria, a.ubicacion].join(' ')).includes(q);
+  });
+  const cmp = {
+    nombre: (x, y) => (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'),
+    stock: (x, y) => stA(x[0]) - stA(y[0]),
+    categoria: (x, y) => (x[1].categoria || '').localeCompare(y[1].categoria || '', 'es') || (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'),
+    reciente: (x, y) => (y[1].actualizado || 0) - (x[1].actualizado || 0)
+  }[sort];
+  list.sort(cmp);
+  $('#invGrid').innerHTML = list.length ? list.map(([id, a]) => {
+    const c = stClass(id), m = num(a.stockMin);
+    return `<article class="card item" data-id="${id}">
+      ${thumbHTML(a.thumbId)}
+      <div class="body">
+        <div class="nm">${esc(a.nombre)}</div>
+        <div class="meta mono">${esc([a.sku, a.categoria].filter(Boolean).join(' · ') || '—')}</div>
+        <div class="srow">
+          <span class="stk ${c}">${fmt(stA(id))}</span><span class="lim">${esc(a.unidad || 'und')}${m ? ' · mín ' + fmt(m) : ''}</span>
+          <div class="qa"><button data-q="salida" title="Salida">−</button><button data-q="entrada" title="Entrada">+</button></div>
+        </div>
+      </div></article>`;
+  }).join('') : `<div class="empty">${all.length ? 'Sin resultados con estos filtros.' : 'Aún no hay artículos. Creá el primero o importá un CSV desde el menú de usuario.'}</div>`;
+}
+['input', 'change'].forEach(ev => { $('#invQ').addEventListener(ev, sched); $('#invCat').addEventListener(ev, sched); $('#invSort').addEventListener(ev, sched); });
+$('#invLow').addEventListener('click', e => { S.invLow = !S.invLow; e.target.classList.toggle('on', S.invLow); sched(); });
+$('#invGrid').addEventListener('click', e => {
+  const card = e.target.closest('.item'); if (!card) return;
+  const qb = e.target.closest('[data-q]'), id = card.dataset.id;
+  if (card.dataset.rt === 'p') { if (qb) openMov('p', id, qb.dataset.q); else { S.nDiag = 1; $('#diagN').value = 1; S.collapsed.clear(); go('det', id); } return; }
+  if (qb) openMov('a', id, qb.dataset.q); else openArt(id);
+});
+
+/* ---- Productos terminados (stock de productos fabricados) ---- */
+function renderPT() {
+  const q = norm($('#invQ').value), all = Object.entries(S.prod);
+  let units = 0, val = 0, withSt = 0;
+  for (const [id] of all) { const s = stP(id); if (s > 0) { withSt++; units += s; val += s * costUnit(id); } }
+  const last = S.mov.find(m => m.tipo === 'fabricacion');
+  $('#invStats').innerHTML = `
+    <div class="stat"><b>${withSt}</b><span>Productos con stock</span></div>
+    <div class="stat"><b>${fmt(units)}</b><span>Unidades terminadas</span></div>
+    <div class="stat"><b>${money(val)}</b><span>Valor (costo materiales)</span></div>
+    <div class="stat"><b style="font-size:15px">${last ? esc(last.nombre) + ' ×' + fmt(last.cant) : '—'}</b><span>Última fabricación${last ? ' · ' + fdate(last.t) : ''}</span></div>`;
+  const list = all.filter(([id, p]) => (S.ptAll || stP(id) > 0) && (!q || norm([p.nombre, p.codigo, p.categoria].join(' ')).includes(q)))
+    .sort((x, y) => stP(y[0]) - stP(x[0]) || (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'));
+  $('#invGrid').innerHTML = list.length ? list.map(([id, p]) => {
+    const s = stP(id);
+    return `<article class="card item pt${s > 0 ? '' : ' dim'}" data-id="${id}" data-rt="p">
+      ${thumbHTML(p.thumbId)}
+      <div class="body">
+        <div class="nm">${esc(p.nombre)} <span class="badge acc">PRODUCTO</span></div>
+        <div class="meta mono">${esc([p.codigo, p.categoria].filter(Boolean).join(' · ') || '—')}</div>
+        <div class="lim">Valor: ${money(s * costUnit(id))} · se pueden fabricar ${fmt(cap(id))} más</div>
+        <div class="srow">
+          <span class="stk">${fmt(s)}</span><span class="lim">und terminadas</span>
+          <div class="qa"><button data-q="salida" title="Salida (entrega / venta)">−</button><button data-q="entrada" title="Entrada manual">+</button></div>
+        </div>
+      </div></article>`;
+  }).join('') : `<div class="empty">${all.length ? 'No hay productos terminados en stock. Al fabricar, aparecerán aquí.' : 'Aún no hay productos definidos.'}</div>`;
+}
+$('#invSeg').addEventListener('click', e => {
+  const b = e.target.closest('[data-s]'); if (!b) return;
+  S.invSec = b.dataset.s; $$('#invSeg button').forEach(x => x.classList.toggle('on', x === b));
+  $('#invQ').value = ''; sched();
+});
+$('#ptAll').addEventListener('click', e => { S.ptAll = !S.ptAll; e.target.classList.toggle('on', S.ptAll); sched(); });
+$('#ptFab').addEventListener('click', () => go('fab'));
+$('#artNew').addEventListener('click', () => openArt(null));
+
+/* ---- Productos ---- */
+function renderProd() {
+  const q = norm($('#prodQ').value);
+  const list = Object.entries(S.prod).filter(([, p]) => !q || norm([p.nombre, p.codigo, p.categoria].join(' ')).includes(q))
+    .sort((x, y) => (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'));
+  $('#prodGrid').innerHTML = list.length ? list.map(([id, p]) => {
+    const c = cap(id), nb = Object.keys(p.bom || {}).length, L = limitantes(id);
+    const lim = nb ? [...L.a.map(x => nameOf('a', x)), ...L.p.map(x => nameOf('p', x))].slice(0, 2) : [];
+    return `<article class="card item" data-id="${id}">
+      ${thumbHTML(p.thumbId)}
+      <div class="body">
+        <div class="nm">${esc(p.nombre)}</div>
+        <div class="meta mono">${esc([p.codigo, p.categoria].filter(Boolean).join(' · ') || '—')} · ${nb} comp.</div>
+        <div class="cap"><b class="${c ? '' : 'zero'}">${fmt(c)}</b><span class="lim">und posibles</span></div>
+        <div class="lim">${nb ? (lim.length ? 'Limita: <em>' + esc(lim.join(', ')) + '</em>' : '') : '<em>Sin lista de materiales</em>'}</div>
+        <div class="srow"><span class="lim">Armadas: <b class="mono">${fmt(stP(id))}</b> · ${money(costUnit(id))}/und</span></div>
+      </div></article>`;
+  }).join('') : `<div class="empty">${Object.keys(S.prod).length ? 'Sin resultados.' : 'Aún no hay productos. Creá uno y agregale su lista de materiales.'}</div>`;
+}
+$('#prodQ').addEventListener('input', sched);
+$('#prodGrid').addEventListener('click', e => { const c = e.target.closest('.item'); if (c) { S.nDiag = 1; $('#diagN').value = 1; S.collapsed.clear(); go('det', c.dataset.id); } });
+$('#prodNew').addEventListener('click', () => openProd(null));
+
+/* ---- Detalle ---- */
+function renderDet() {
+  const pid = S.det, p = S.prod[pid];
+  if (!p) { go('prod'); return; }
+  $('#detName').textContent = p.nombre;
+  const c = cap(pid), L = limitantes(pid), nb = Object.keys(p.bom || {}).length;
+  const lim = [...L.a.map(x => nameOf('a', x)), ...L.p.map(x => nameOf('p', x))];
+  $('#detInfo').innerHTML = `<div class="info">
+    ${thumbHTML(p.thumbId, 'thumb', 400)}
+    <div style="min-width:0">
+      <div class="meta mono">${esc([p.codigo, p.categoria].filter(Boolean).join(' · ') || 'Sin código')}</div>
+      <div style="margin-top:4px;white-space:pre-wrap">${esc(p.descripcion || '')}</div>
+      <div class="kv">
+        <div><span>Alcanza para</span><b style="color:var(--${c ? 'acc' : 'bad'})">${fmt(c)} und</b></div>
+        <div><span>Armadas en stock</span><b>${fmt(stP(pid))}</b> <button class="btn sm ghost" id="detMov" style="padding:0 6px">±</button></div>
+        <div><span>Costo materiales</span><b>${money(costUnit(pid))}</b></div>
+      </div>
+      ${nb && lim.length ? `<div class="lim" style="margin-top:8px">Material limitante: <em>${esc(lim.join(', '))}</em></div>` : ''}
+    </div></div>`;
+  $('#detMov').onclick = () => openMov('p', pid, 'entrada');
+  $('#bomCount').textContent = nb + ' ítems';
+  const rows = Object.entries(p.bom || {}).sort((x, y) => (x[1].t === y[1].t ? 0 : x[1].t === 'p' ? -1 : 1) || nameOf(x[1].t, x[0]).localeCompare(nameOf(y[1].t, y[0]), 'es'));
+  $('#bomTbl').innerHTML = rows.length ? `<tr><th></th><th>Componente</th><th class="n">Cant/und</th><th class="n">Stock</th><th class="n">Alcanza</th><th class="n">Costo</th><th></th></tr>` +
+    rows.map(([cid, cc]) => {
+      const isP = cc.t === 'p', o = (isP ? S.prod : S.art)[cid] || {}, q = +cc.q || 0;
+      const s = isP ? stP(cid) : stA(cid);
+      const alc = q > 0 ? Math.floor((s + (isP ? cap(cid) : 0)) / q + 1e-9) : 0;
+      const cls = !o.nombre ? 'bad' : (alc < 1 ? 'bad' : '');
+      const cost = q * (isP ? costUnit(cid) : num(o.costo));
+      return `<tr class="${cls}" data-cid="${cid}">
+        <td>${thumbHTML(o.thumbId, 'thumb mini', 100)}</td>
+        <td><div class="nm" style="font-weight:500">${esc(o.nombre || '(eliminado)')} ${isP ? '<span class="badge acc">SUB</span>' : ''}</div><div class="meta mono">${esc(isP ? (o.codigo || '') : (o.sku || ''))}</div></td>
+        <td class="n"><input class="inp" type="number" step="any" min="0" value="${q}" data-bq="${cid}"> <span class="lim">${esc(isP ? 'und' : unitOf(cid))}</span></td>
+        <td class="n">${fmt(s)}${isP ? `<div class="lim">+${fmt(cap(cid))} fabr.</div>` : ''}</td>
+        <td class="n"><b>${fmt(alc)}</b></td>
+        <td class="n">${money(cost)}</td>
+        <td><button class="btn sm ghost danger" data-brm="${cid}" title="Quitar">✕</button></td></tr>`;
+    }).join('') : `<tr><td class="empty" colspan="7">Agregá artículos o subensambles a la lista de materiales.</td></tr>`;
+  renderDiagram();
+}
+$('#detBack').addEventListener('click', () => go('prod'));
+$('#detEdit').addEventListener('click', () => openProd(S.det));
+$('#detFab').addEventListener('click', () => { $('#fabP').dataset.want = S.det; go('fab'); });
+$('#detDel').addEventListener('click', async () => {
+  const pid = S.det, p = S.prod[pid]; const u = usedIn('p', pid);
+  if (u.length) return toast('Se usa como subensamble en: ' + u.join(', '), 'bad');
+  if (!await confirmDlg('Eliminar producto', `¿Eliminar <b>${esc(p.nombre)}</b> y su lista de materiales? El historial de movimientos se conserva.`, 'Eliminar')) return;
+  await db.ref().update({ ['productos/' + pid]: null, ['stock/p/' + pid]: null });
+  delImg(p.thumbId); go('prod'); toast('Producto eliminado');
+});
+$('#bomTbl').addEventListener('change', e => {
+  const i = e.target.closest('[data-bq]'); if (!i) return;
+  const q = num(i.value); if (q <= 0) { toast('La cantidad debe ser mayor que 0', 'bad'); sched(); return; }
+  db.ref(`productos/${S.det}/bom/${i.dataset.bq}/q`).set(q);
+});
+$('#bomTbl').addEventListener('click', e => {
+  const b = e.target.closest('[data-brm]'); if (b) db.ref(`productos/${S.det}/bom/${b.dataset.brm}`).remove();
+});
+$('#bomAdd').addEventListener('click', openComp);
+$('#diagN').addEventListener('input', e => { S.nDiag = Math.max(1, Math.floor(num(e.target.value)) || 1); renderDiagram(); });
+
+/* ---- Diagrama SVG ---- */
+const DW = 252, DH = 74, HG = 60, VG = 12;
+function buildTree(pid) {
+  const mk = (t, id, q, d, path, tot) => {
+    const bom = t === 'p' ? ((S.prod[id] || {}).bom || {}) : {};
+    const node = { t, id, q, d, key: path, tot, kids: [], hasKids: t === 'p' && Object.keys(bom).length > 0 };
+    if (node.hasKids && d < 12 && (d === 0 || !S.collapsed.has(path)))
+      for (const [cid, c] of Object.entries(bom).sort((x, y) => (x[1].t === y[1].t ? 0 : x[1].t === 'p' ? -1 : 1)))
+        node.kids.push(mk(c.t, cid, +c.q || 0, d + 1, path + '/' + cid, tot * (+c.q || 0)));
+    return node;
+  };
+  return mk('p', pid, 1, 0, 'r', 1);
+}
+function renderDiagram() {
+  const pid = S.det; if (!S.prod[pid]) return;
+  const n = S.nDiag, pl = plan(pid, n), L = limitantes(pid), limSet = new Set([...L.a, ...L.p]);
+  const tree = buildTree(pid);
+  const measure = nd => { nd.kids.forEach(measure); nd.h = nd.kids.length ? Math.max(DH, nd.kids.reduce((s, k) => s + k.h, 0) + VG * (nd.kids.length - 1)) : DH; };
+  let maxD = 0, nodes = [], edges = [];
+  const place = (nd, x, y) => {
+    nd.x = x; nd.y = y + (nd.h - DH) / 2; maxD = Math.max(maxD, nd.d); nodes.push(nd);
+    let cy = y; for (const k of nd.kids) { place(k, x + DW + HG, cy); edges.push([nd, k]); cy += k.h + VG; }
+  };
+  measure(tree); place(tree, 0, 0);
+  const TW = (maxD + 1) * (DW + HG) - HG, TH = tree.h;
+  const cut = (s, m) => s.length > m ? s.slice(0, m - 1) + '…' : s;
+  let out = `<defs><clipPath id="ck"><rect x="13" y="15" width="44" height="44" rx="7"/></clipPath></defs>`;
+  for (const [a, b] of edges) {
+    const x1 = a.x + DW, y1 = a.y + DH / 2, x2 = b.x, y2 = b.y + DH / 2, mx = (x1 + x2) / 2;
+    out += `<path class="edge" d="M${x1} ${y1}C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}"/><text class="el" x="${x2 - 6}" y="${y2 - 5}" text-anchor="end">×${fmt(b.q)}</text>`;
+  }
+  for (const nd of nodes) {
+    const isP = nd.t === 'p', o = (isP ? S.prod : S.art)[nd.id] || {};
+    let st = 'ok', l2 = '', l3 = '';
+    if (nd.d === 0) {
+      st = pl.ok ? 'ok' : 'bad';
+      l2 = `Para ${fmt(n)} und · ${money(costUnit(pid) * n)}`;
+      l3 = pl.ok ? `✓ Alcanza · máx ${fmt(cap(pid))}` : `✗ Insuficiente · máx ${fmt(cap(pid))}`;
+    } else if (isP) {
+      const u = pl.use[nd.id] || 0, f = pl.build[nd.id] || 0;
+      st = pl.faltP[nd.id] ? 'bad' : (f > 0 ? 'acc' : 'ok');
+      l2 = `×${fmt(nd.q)} · req ${fmt(nd.tot * n)} und`;
+      l3 = `stock ${fmt(stP(nd.id))} · usa ${fmt(u)} · fab ${fmt(f)}`;
+    } else {
+      const s = stA(nd.id), m = num(o.stockMin), need = pl.art[nd.id] || 0;
+      st = pl.falt[nd.id] ? 'bad' : (m > 0 && s - need < m ? 'warn' : 'ok');
+      l2 = `×${fmt(nd.q)} ${unitOf(nd.id)} · req ${fmt(nd.tot * n)}`;
+      l3 = pl.falt[nd.id] ? `stock ${fmt(s)} · falta ${fmt(pl.falt[nd.id])}` : `stock ${fmt(s)} · ≈${fmt(nd.tot > 0 ? Math.floor(s / nd.tot + 1e-9) : 0)} und`;
+    }
+    out += `<g class="node${nd.d === 0 ? ' root' : ''}" data-key="${esc(nd.key)}" data-t="${nd.t}" data-id="${esc(nd.id)}" transform="translate(${nd.x},${nd.y})">
+      <rect class="nb" width="${DW}" height="${DH}" rx="9"/><rect class="bar ${st}" x="0" y="8" width="4" height="${DH - 16}" rx="2"/>
+      ${o.thumbId ? `<rect class="ph" x="13" y="15" width="44" height="44" rx="7"/><image href="${thumbUrl(o.thumbId, 120)}" x="13" y="15" width="44" height="44" preserveAspectRatio="xMidYMid slice" clip-path="url(#ck)"/>` : `<rect class="ph" x="13" y="15" width="44" height="44" rx="7"/><text class="ns" x="35" y="41" text-anchor="middle">${isP ? 'SUB' : '—'}</text>`}
+      <text class="nt" x="67" y="27">${esc(cut(o.nombre || '(eliminado)', 26))}</text>
+      <text class="ns" x="67" y="45">${esc(l2)}</text><text class="ns" x="67" y="61">${esc(l3)}</text>
+      ${nd.d > 0 && limSet.has(nd.id) ? `<rect class="lb" x="${DW - 70}" y="-8" width="64" height="16" rx="8"/><text class="lt" x="${DW - 38}" y="3" text-anchor="middle">LIMITANTE</text>` : ''}
+      ${nd.d > 0 && nd.hasKids ? `<g data-tog="1"><circle class="tg" cx="${DW}" cy="${DH / 2}" r="10"/><text class="tgt" x="${DW}" y="${DH / 2 + 4}" text-anchor="middle">${S.collapsed.has(nd.key) ? '+' : '−'}</text></g>` : ''}
+    </g>`;
+  }
+  const svg = $('#diag'); svg.innerHTML = out;
+  if (S.vbPid !== pid || !S.vb) { S.vbPid = pid; fitVB(TW, TH); }
+  S.bounds = [TW, TH];
+  svg.setAttribute('viewBox', `${S.vb.x} ${S.vb.y} ${S.vb.w} ${S.vb.h}`);
+  // faltantes
+  const fl = Object.entries(pl.falt), fp = Object.entries(pl.faltP);
+  $('#diagFalt').innerHTML = (fl.length || fp.length) ? `<div class="banner bad">Faltantes para ${fmt(n)} und</div><div class="tblwrap"><table class="tbl"><tr><th>Componente</th><th class="n">Requerido</th><th class="n">Stock</th><th class="n">Falta</th><th class="n">Costo est.</th></tr>
+    ${fl.map(([id, f]) => `<tr><td>${esc(nameOf('a', id))}</td><td class="n">${fmt(pl.art[id])}</td><td class="n">${fmt(stA(id))}</td><td class="n"><b>${fmt(f)}</b> ${esc(unitOf(id))}</td><td class="n">${money(f * num((S.art[id] || {}).costo))}</td></tr>`).join('')}
+    ${fp.map(([id, f]) => `<tr><td>${esc(nameOf('p', id))} <span class="badge">sin materiales</span></td><td class="n">—</td><td class="n">${fmt(stP(id))}</td><td class="n"><b>${fmt(f)}</b> und</td><td class="n">—</td></tr>`).join('')}
+    </table></div>` : (Object.keys(S.prod[pid].bom || {}).length ? `<div class="banner ok">Hay material suficiente para ${fmt(n)} und.</div>` : '');
+}
+function fitVB(TW, TH) { S.vb = { x: -24, y: -24, w: TW + 48, h: TH + 48 }; }
+function zoom(f, cx, cy) {
+  const v = S.vb; if (cx == null) { cx = v.x + v.w / 2; cy = v.y + v.h / 2; }
+  const nw = Math.min(Math.max(v.w * f, 120), 20000), k = nw / v.w;
+  S.vb = { x: cx - (cx - v.x) * k, y: cy - (cy - v.y) * k, w: nw, h: v.h * k };
+  $('#diag').setAttribute('viewBox', `${S.vb.x} ${S.vb.y} ${S.vb.w} ${S.vb.h}`);
+}
+(function diagEvents() {
+  const svg = $('#diag'); let drag = null;
+  const scale = () => { const r = svg.getBoundingClientRect(); return Math.max(S.vb.w / r.width, S.vb.h / r.height); };
+  const toSvg = (cx, cy) => { const r = svg.getBoundingClientRect(), s = scale(); return [S.vb.x + (cx - r.left) * s - (r.width * s - S.vb.w) / 2, S.vb.y + (cy - r.top) * s - (r.height * s - S.vb.h) / 2]; };
+  svg.addEventListener('wheel', e => { if (!S.vb) return; e.preventDefault(); const [x, y] = toSvg(e.clientX, e.clientY); zoom(e.deltaY > 0 ? 1.12 : 1 / 1.12, x, y); }, { passive: false });
+  svg.addEventListener('pointerdown', e => { if (!S.vb) return; drag = { x: e.clientX, y: e.clientY, vx: S.vb.x, vy: S.vb.y, moved: false, tgt: e.target }; svg.setPointerCapture(e.pointerId); });
+  svg.addEventListener('pointermove', e => {
+    if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 4) { drag.moved = true; svg.classList.add('drag'); }
+    if (drag.moved) { const s = scale(); S.vb.x = drag.vx - dx * s; S.vb.y = drag.vy - dy * s; svg.setAttribute('viewBox', `${S.vb.x} ${S.vb.y} ${S.vb.w} ${S.vb.h}`); }
+  });
+  svg.addEventListener('pointerup', () => {
+    if (!drag) return; const d = drag; drag = null; svg.classList.remove('drag');
+    if (d.moved) return;
+    const g = d.tgt.closest && d.tgt.closest('.node'); if (!g) return;
+    if (d.tgt.closest('[data-tog]')) { const k = g.dataset.key; S.collapsed.has(k) ? S.collapsed.delete(k) : S.collapsed.add(k); renderDiagram(); return; }
+    if (g.dataset.t === 'a') openArt(g.dataset.id);
+    else if (g.dataset.key !== 'r') { S.collapsed.clear(); S.vb = null; go('det', g.dataset.id); }
+  });
+  $('#zIn').onclick = () => zoom(1 / 1.25); $('#zOut').onclick = () => zoom(1.25);
+  $('#zFit').onclick = () => { if (S.bounds) { fitVB(...S.bounds); zoom(1); } };
+})();
+
+/* ---- Fabricar ---- */
+function renderFab() {
+  const sel = $('#fabP'), want = sel.dataset.want || sel.value;
+  const opts = Object.entries(S.prod).sort((x, y) => (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'));
+  sel.innerHTML = '<option value="">— Elegí un producto —</option>' + opts.map(([id, p]) => `<option value="${id}"${id === want ? ' selected' : ''}>${esc(p.nombre)} (máx ${fmt(cap(id))})</option>`).join('');
+  delete sel.dataset.want;
+  renderFabPlan();
+}
+function renderFabPlan() {
+  const pid = $('#fabP').value, n = Math.max(0, Math.floor(num($('#fabN').value)));
+  const box = $('#fabPlan'), btn = $('#fabGo');
+  if (!pid) { box.innerHTML = '<div class="empty">Seleccioná un producto para ver el consumo de materiales.</div>'; btn.disabled = true; return; }
+  if (n < 1) { box.innerHTML = '<div class="banner bad">La cantidad debe ser al menos 1.</div>'; btn.disabled = true; return; }
+  const pl = plan(pid, n), c = cap(pid);
+  btn.disabled = !pl.ok;
+  const arts = Object.entries(pl.art).sort((x, y) => nameOf('a', x[0]).localeCompare(nameOf('a', y[0]), 'es'));
+  const subs = [...new Set([...Object.keys(pl.use), ...Object.keys(pl.build), ...Object.keys(pl.faltP)])];
+  box.innerHTML = `<div class="banner ${pl.ok ? 'ok' : 'bad'}">${pl.ok ? `✓ Material suficiente para ${fmt(n)} und de ${esc(nameOf('p', pid))}. Máximo posible: ${fmt(c)}.` : `✗ ${esc(pl.err || 'Material insuficiente')}. Máximo posible: ${fmt(c)} und.`}</div>
+    ${subs.length ? `<h3 style="margin:14px 0 6px">Subensambles</h3><div class="tblwrap"><table class="tbl"><tr><th>Subensamble</th><th class="n">En stock</th><th class="n">Usa del stock</th><th class="n">Fabrica</th><th class="n">Estado</th></tr>
+      ${subs.map(id => `<tr class="${pl.faltP[id] ? 'bad' : ''}"><td>${esc(nameOf('p', id))}</td><td class="n">${fmt(stP(id))}</td><td class="n">${fmt(pl.use[id] || 0)}</td><td class="n">${fmt(pl.build[id] || 0)}</td><td class="n">${pl.faltP[id] ? '<span class="badge bad">Sin BOM</span>' : '<span class="badge ok">OK</span>'}</td></tr>`).join('')}</table></div>` : ''}
+    <h3 style="margin:14px 0 6px">Consumo de materiales</h3>
+    <div class="tblwrap"><table class="tbl"><tr><th>Material</th><th class="n">Requerido</th><th class="n">Disponible</th><th class="n">Después</th><th class="n">Costo</th><th class="n">Estado</th></tr>
+    ${arts.map(([id, q]) => { const s = stA(id), f = pl.falt[id] || 0, m = num((S.art[id] || {}).stockMin), aft = s - q;
+      const st = f ? ['bad', 'Falta ' + fmt(f)] : (m > 0 && aft < m ? ['warn', 'Bajo mín.'] : ['ok', 'OK']);
+      return `<tr class="${f ? 'bad' : (st[0] === 'warn' ? 'warn' : '')}"><td>${esc(nameOf('a', id))}</td><td class="n">${fmt(q)} ${esc(unitOf(id))}</td><td class="n">${fmt(s)}</td><td class="n">${fmt(Math.max(0, aft))}</td><td class="n">${money(q * num((S.art[id] || {}).costo))}</td><td class="n"><span class="badge ${st[0]}">${st[1]}</span></td></tr>`; }).join('')}
+    </table></div>
+    <div class="lim" style="margin-top:8px">Costo total de materiales: <b class="mono">${money(costUnit(pid) * n)}</b></div>`;
+}
+$('#fabP').addEventListener('change', renderFabPlan);
+$('#fabN').addEventListener('input', renderFabPlan);
+$('#fabMax').addEventListener('click', () => { const p = $('#fabP').value; if (p) { $('#fabN').value = Math.max(1, cap(p)); renderFabPlan(); } });
+$('#fabCsv').addEventListener('click', () => {
+  const pid = $('#fabP').value, n = Math.max(1, Math.floor(num($('#fabN').value))); if (!pid) return;
+  const pl = plan(pid, n), rows = [['Material', 'SKU', 'Proveedor', 'Requerido', 'Stock', 'Faltante', 'Unidad', 'Costo unit', 'Costo faltante']];
+  for (const [id, f] of Object.entries(pl.falt)) { const a = S.art[id] || {}; rows.push([a.nombre, a.sku, a.proveedor, pl.art[id], stA(id), f, a.unidad, num(a.costo), r6(f * num(a.costo))]); }
+  if (rows.length === 1) return toast('No hay faltantes para esa cantidad');
+  download(`compras_${(S.prod[pid].codigo || S.prod[pid].nombre || 'producto').replace(/\W+/g, '_')}_x${n}.csv`, toCSV(rows), 'text/csv');
+});
+$('#fabGo').addEventListener('click', async () => {
+  const pid = $('#fabP').value, n = Math.floor(num($('#fabN').value)); if (!pid || n < 1) return;
+  if (!await confirmDlg('Confirmar fabricación', `Se descontarán los materiales y se sumarán <b>${fmt(n)}</b> und a <b>${esc(nameOf('p', pid))}</b>.`, 'Fabricar')) return;
+  const b = $('#fabGo'); b.disabled = true; b.textContent = 'Procesando…';
+  try { await fabricar(pid, n, $('#fabNota').value.trim()); toast(`Fabricadas ${fmt(n)} und de ${nameOf('p', pid)} → Inventario › Productos terminados`); $('#fabNota').value = ''; }
+  catch (err) { toast(err.message, 'bad'); }
+  finally { b.textContent = 'Confirmar fabricación'; renderFabPlan(); }
+});
+
+/* ---- Movimientos ---- */
+function movFiltered() {
+  const q = norm($('#movQ').value), t = $('#movT').value;
+  return S.mov.filter(m => (!t || m.tipo === t) && (!q || norm([m.nombre, m.u, m.nota, m.sub].join(' ')).includes(q)));
+}
+function renderMov() {
+  const list = movFiltered();
+  $('#movTbl').innerHTML = list.length ? `<tr><th>Fecha</th><th>Tipo</th><th>Ítem</th><th class="n">Cantidad</th><th class="n">Antes → Después</th><th>Usuario</th><th>Nota</th></tr>` +
+    list.map(m => { const [lbl, cls] = TIPOS[m.tipo] || [m.tipo, ''];
+      return `<tr><td class="mono" style="white-space:nowrap">${fdate(m.t)}</td><td><span class="badge ${cls}">${lbl}</span></td>
+      <td>${esc(m.nombre)}${m.rt === 'p' ? ' <span class="badge">prod</span>' : ''}</td>
+      <td class="n" style="color:var(--${m.cant >= 0 ? 'ok' : 'bad'})">${m.cant > 0 ? '+' : ''}${fmt(m.cant)}</td>
+      <td class="n">${fmt(m.antes)} → ${fmt(m.despues)}</td><td class="meta">${esc((m.u || '').split('@')[0])}</td>
+      <td>${esc([m.nota, m.sub ? 'Sub: ' + m.sub : ''].filter(Boolean).join(' · '))}</td></tr>`; }).join('')
+    : '<tr><td class="empty">Sin movimientos.</td></tr>';
+}
+$('#movQ').addEventListener('input', renderMov); $('#movT').addEventListener('change', renderMov);
+$('#movCsv').addEventListener('click', () => {
+  const rows = [['Fecha', 'Tipo', 'Item', 'Clase', 'Cantidad', 'Antes', 'Despues', 'Usuario', 'Nota', 'Lote']];
+  movFiltered().forEach(m => rows.push([fdate(m.t), m.tipo, m.nombre, m.rt === 'p' ? 'producto' : 'articulo', m.cant, m.antes, m.despues, m.u, [m.nota, m.sub].filter(Boolean).join(' | '), m.lote || '']));
+  download('movimientos.csv', toCSV(rows), 'text/csv');
+});
+
+/* ============================== diálogos ============================== */
+function imgPicker(inp, prev, rm) {
+  $(inp).addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { S.pendImg = await compress(f); S.imgRemove = false; $(prev).className = 'thumb'; $(prev).innerHTML = `<img src="${S.pendImg}" alt="">`; }
+    catch (err) { toast(err.message, 'bad'); }
+    e.target.value = '';
+  });
+  $(rm).addEventListener('click', () => { S.pendImg = null; S.imgRemove = true; $(prev).className = 'thumb noimg'; $(prev).innerHTML = ''; });
+}
+function setPrev(prev, id) { $(prev).outerHTML = thumbHTML(id).replace('<div class="', `<div id="${prev.slice(1)}" class="`); }
+imgPicker('#artImg', '#artImgPrev', '#artImgRm');
+imgPicker('#prodImg', '#prodImgPrev', '#prodImgRm');
+
+/* ---- Artículo ---- */
+function openArt(id) {
+  const a = id ? S.art[id] : null, f = $('#fArt');
+  S.editArt = id; S.pendImg = null; S.imgRemove = false; f.reset();
+  $('#artTitle').textContent = a ? 'Editar artículo' : 'Nuevo artículo';
+  $('#artDel').classList.toggle('hide', !a); $('#artStockF').classList.toggle('hide', !!a);
+  ['nombre', 'sku', 'categoria', 'unidad', 'stockMin', 'costo', 'proveedor', 'ubicacion', 'notas'].forEach(k => { if (a && a[k] != null) f.elements[k].value = a[k]; });
+  setPrev('#artImgPrev', a && a.thumbId);
+  $('#dlgArt').showModal();
+}
+$('#fArt').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, E = f.elements, isNew = !S.editArt, id = S.editArt || db.ref('articulos').push().key, prev = S.art[id] || {};
+  const nombre = E.nombre.value.trim(); if (!nombre) return;
+  const TS = firebase.database.ServerValue.TIMESTAMP;
+  const obj = { nombre, sku: E.sku.value.trim(), categoria: E.categoria.value.trim(), unidad: E.unidad.value.trim() || 'und', stockMin: num(E.stockMin.value), costo: num(E.costo.value), proveedor: E.proveedor.value.trim(), ubicacion: E.ubicacion.value.trim(), notas: E.notas.value.trim(), thumbId: S.imgRemove ? null : (prev.thumbId || null), creado: prev.creado || TS, actualizado: TS };
+  const btn = $('#artSave'); btn.disabled = true; btn.textContent = 'Guardando…';
+  try {
+    if (S.pendImg) {
+      btn.textContent = 'Subiendo imagen…';
+      try { obj.thumbId = await uploadImg(S.pendImg, nombre, prev.thumbId); } catch (err) { toast('Imagen no subida: ' + err.message, 'bad'); }
+    } else if (S.imgRemove && prev.thumbId) delImg(prev.thumbId);
+    const up = { ['articulos/' + id]: obj }; const st0 = isNew ? Math.max(0, num(E.stock.value)) : 0;
+    if (isNew) up['stock/a/' + id] = st0;
+    await db.ref().update(up);
+    if (isNew && st0 > 0) logMov({ tipo: 'alta', rt: 'a', rid: id, cant: st0, antes: 0, despues: st0, nota: 'Stock inicial' });
+    $('#dlgArt').close(); toast(isNew ? 'Artículo creado' : 'Artículo actualizado');
+  } catch (err) { toast(err.message, 'bad'); }
+  finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+});
+$('#artDel').addEventListener('click', async () => {
+  const id = S.editArt, a = S.art[id]; const u = usedIn('a', id);
+  if (u.length) return toast('Se usa en: ' + u.join(', ') + '. Quitalo de esas listas primero.', 'bad');
+  $('#dlgArt').close();
+  if (!await confirmDlg('Eliminar artículo', `¿Eliminar <b>${esc(a.nombre)}</b>? Stock actual: ${fmt(stA(id))}.`, 'Eliminar')) return;
+  await db.ref().update({ ['articulos/' + id]: null, ['stock/a/' + id]: null });
+  delImg(a.thumbId); toast('Artículo eliminado');
+});
+
+/* ---- Producto ---- */
+function openProd(id) {
+  const p = id ? S.prod[id] : null, f = $('#fProd');
+  S.editProd = id; S.pendImg = null; S.imgRemove = false; f.reset();
+  $('#prodTitle').textContent = p ? 'Editar producto' : 'Nuevo producto';
+  ['nombre', 'codigo', 'categoria', 'descripcion'].forEach(k => { if (p && p[k] != null) f.elements[k].value = p[k]; });
+  setPrev('#prodImgPrev', p && p.thumbId);
+  $('#dlgProd').showModal();
+}
+$('#fProd').addEventListener('submit', async e => {
+  e.preventDefault();
+  const E = e.target.elements, isNew = !S.editProd, id = S.editProd || db.ref('productos').push().key, prev = S.prod[id] || {};
+  const nombre = E.nombre.value.trim(); if (!nombre) return;
+  const TS = firebase.database.ServerValue.TIMESTAMP;
+  const up = { nombre, codigo: E.codigo.value.trim(), categoria: E.categoria.value.trim(), descripcion: E.descripcion.value.trim(), thumbId: S.imgRemove ? null : (prev.thumbId || null), actualizado: TS };
+  if (isNew) up.creado = TS;
+  const btn = $('#prodSave'); btn.disabled = true; btn.textContent = 'Guardando…';
+  try {
+    if (S.pendImg) { btn.textContent = 'Subiendo imagen…'; try { up.thumbId = await uploadImg(S.pendImg, nombre, prev.thumbId); } catch (err) { toast('Imagen no subida: ' + err.message, 'bad'); } }
+    else if (S.imgRemove && prev.thumbId) delImg(prev.thumbId);
+    await db.ref('productos/' + id).update(up);   // update conserva la BOM
+    $('#dlgProd').close(); toast(isNew ? 'Producto creado' : 'Producto actualizado');
+    if (isNew) { S.nDiag = 1; $('#diagN').value = 1; go('det', id); }
+  } catch (err) { toast(err.message, 'bad'); }
+  finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+});
+
+/* ---- Componente ---- */
+function openComp() {
+  S.comp = null; $('#compQ').value = ''; $('#compN').value = 1; $('#compSel').textContent = '—';
+  renderCompList(); $('#dlgComp').showModal(); setTimeout(() => $('#compQ').focus(), 50);
+}
+function renderCompList() {
+  const q = norm($('#compQ').value), pid = S.det, bom = (S.prod[pid] || {}).bom || {};
+  const items = [
+    ...Object.entries(S.prod).filter(([id]) => !wouldCycle(pid, id)).map(([id, p]) => ['p', id, p]),
+    ...Object.entries(S.art).map(([id, a]) => ['a', id, a])
+  ].filter(([, , o]) => !q || norm([o.nombre, o.sku, o.codigo, o.categoria].join(' ')).includes(q))
+   .sort((x, y) => (x[2].nombre || '').localeCompare(y[2].nombre || '', 'es')).slice(0, 200);
+  $('#compList').innerHTML = items.length ? items.map(([t, id, o]) => `<div data-t="${t}" data-id="${id}" class="${S.comp && S.comp.id === id ? 'sel' : ''}">
+    ${thumbHTML(o.thumbId, 'thumb mini', 100)}
+    <div style="flex:1;min-width:0"><div class="nm" style="font-weight:500">${esc(o.nombre)} ${t === 'p' ? '<span class="badge acc">SUB</span>' : ''} ${bom[id] ? '<span class="badge">ya en lista</span>' : ''}</div>
+    <div class="meta mono">${esc(t === 'p' ? (o.codigo || '') : [o.sku, o.categoria].filter(Boolean).join(' · '))} · stock ${fmt(t === 'p' ? stP(id) : stA(id))}</div></div></div>`).join('')
+    : '<div class="empty" style="padding:20px">Sin resultados</div>';
+}
+$('#compQ').addEventListener('input', renderCompList);
+$('#compList').addEventListener('click', e => {
+  const d = e.target.closest('[data-id]'); if (!d) return;
+  S.comp = { t: d.dataset.t, id: d.dataset.id };
+  const ex = ((S.prod[S.det] || {}).bom || {})[S.comp.id]; if (ex) $('#compN').value = ex.q;
+  $('#compSel').textContent = nameOf(S.comp.t, S.comp.id) + (S.comp.t === 'a' ? ` (${unitOf(S.comp.id)})` : ' (und)');
+  renderCompList();
+});
+$('#fComp').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!S.comp) return toast('Seleccioná un componente', 'bad');
+  const q = num($('#compN').value); if (q <= 0) return toast('Cantidad inválida', 'bad');
+  if (S.comp.t === 'p' && wouldCycle(S.det, S.comp.id)) return toast('Eso crearía un ciclo', 'bad');
+  await db.ref(`productos/${S.det}/bom/${S.comp.id}`).set({ t: S.comp.t, q });
+  $('#dlgComp').close(); toast('Componente agregado');
+});
+
+/* ---- Movimiento ---- */
+function openMov(rt, id, tipo) {
+  S.movCtx = { rt, id }; const f = $('#fMov'); f.reset();
+  f.elements.tipo.value = tipo || 'entrada';
+  $('#movTitle').textContent = nameOf(rt, id);
+  updMovPrev(); $('#dlgMov').showModal(); setTimeout(() => f.elements.cant.focus(), 50);
+}
+function updMovPrev() {
+  const f = $('#fMov'), { rt, id } = S.movCtx, t = f.elements.tipo.value, c = num(f.elements.cant.value);
+  const cur = rt === 'p' ? stP(id) : stA(id);
+  const nv = t === 'entrada' ? cur + c : t === 'salida' ? cur - c : c;
+  $('#movNLbl').textContent = t === 'ajuste' ? 'Nuevo valor de stock' : 'Cantidad';
+  $('#movPrev').innerHTML = `${fmt(cur)} → <span class="${nv < 0 ? 'stk bad' : ''}">${fmt(r6(nv))}</span> <span class="lim">${esc(rt === 'p' ? 'und' : unitOf(id))}</span>`;
+}
+$('#fMov').addEventListener('input', updMovPrev);
+$('#fMov').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, t = f.elements.tipo.value, c = num(f.elements.cant.value), { rt, id } = S.movCtx;
+  if (t !== 'ajuste' && c <= 0) return toast('Ingresá una cantidad mayor que 0', 'bad');
+  if (c < 0) return toast('Valor inválido', 'bad');
+  const b = $('#movSave'); b.disabled = true;
+  try { await movStock(rt, id, t, c, f.elements.nota.value.trim()); $('#dlgMov').close(); toast('Movimiento registrado'); }
+  catch (err) { toast(err.message, 'bad'); }
+  finally { b.disabled = false; }
+});
+
+/* ============================ menú usuario ============================ */
+$('#umenu').addEventListener('click', async e => {
+  const b = e.target.closest('[data-m]'); if (!b) return; $('#umenu').open = false;
+  const m = b.dataset.m;
+  if (m === 'out') { auth.signOut(); location.reload(); }
+  if (m === 'json') download(`inventario_${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ articulos: S.art, productos: S.prod, stock: S.stock }, null, 1), 'application/json');
+  if (m === 'backup') { toast('Respaldando en Drive…'); try { const r = await gas('backup'); toast('Respaldo guardado: ' + r.name); } catch (err) { toast(err.message, 'bad'); } }
+  if (m === 'csvexp' && S.invSec === 'pt' && S.view === 'inv') {
+    const rows = [['producto', 'codigo', 'categoria', 'stock', 'costoUnitMateriales', 'valor']];
+    Object.entries(S.prod).forEach(([id, p]) => rows.push([p.nombre, p.codigo, p.categoria, stP(id), r6(costUnit(id)), r6(stP(id) * costUnit(id))]));
+    return download('productos_terminados.csv', toCSV(rows), 'text/csv');
+  }
+  if (m === 'csvexp') {
+    const rows = [['nombre', 'sku', 'categoria', 'unidad', 'stock', 'stockMin', 'costo', 'proveedor', 'ubicacion', 'notas']];
+    Object.entries(S.art).forEach(([id, a]) => rows.push([a.nombre, a.sku, a.categoria, a.unidad, stA(id), a.stockMin, a.costo, a.proveedor, a.ubicacion, a.notas]));
+    download('inventario.csv', toCSV(rows), 'text/csv');
+  }
+  if (m === 'csvimp') $('#csvFile').click();
+});
+document.addEventListener('click', e => { if (!e.target.closest('#umenu')) $('#umenu').open = false; });
+
+function parseCSV(text) {
+  text = text.replace(/^\ufeff/, '');
+  const first = text.split(/\r?\n/)[0] || '', d = (first.split(';').length >= first.split(',').length) ? ';' : ',';
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === d) { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += ch;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(c => c.trim()));
+}
+$('#csvFile').addEventListener('change', async e => {
+  const file = e.target.files[0]; e.target.value = ''; if (!file) return;
+  const rows = parseCSV(await file.text()); if (rows.length < 2) return toast('CSV vacío', 'bad');
+  const H = rows[0].map(h => norm(h).replace(/[^a-z]/g, ''));
+  const col = (...ks) => H.findIndex(h => ks.includes(h));
+  const ix = { nombre: col('nombre', 'articulo', 'descripcion'), sku: col('sku', 'codigo'), categoria: col('categoria'), unidad: col('unidad'), stock: col('stock', 'cantidad', 'existencia'), stockMin: col('stockmin', 'minimo', 'stockminimo'), costo: col('costo', 'precio', 'costounitario'), proveedor: col('proveedor'), ubicacion: col('ubicacion'), notas: col('notas', 'nota') };
+  if (ix.nombre < 0) return toast('El CSV necesita una columna "nombre"', 'bad');
+  const bySku = {}; Object.entries(S.art).forEach(([id, a]) => { if (a.sku) bySku[norm(a.sku)] = id; });
+  const TS = firebase.database.ServerValue.TIMESTAMP, up = {}; let nNew = 0, nUpd = 0;
+  for (const r of rows.slice(1)) {
+    const g = k => ix[k] >= 0 ? (r[ix[k]] || '').trim() : '';
+    const nombre = g('nombre'); if (!nombre) continue;
+    const sku = g('sku'), exist = sku && bySku[norm(sku)];
+    const obj = { nombre, sku, categoria: g('categoria'), unidad: g('unidad') || 'und', stockMin: num(g('stockMin')), costo: num(g('costo')), proveedor: g('proveedor'), ubicacion: g('ubicacion'), notas: g('notas'), actualizado: TS };
+    if (exist) { for (const [k, v] of Object.entries(obj)) up[`articulos/${exist}/${k}`] = v; nUpd++; }
+    else { const id = db.ref('articulos').push().key; up['articulos/' + id] = { ...obj, thumbId: null, creado: TS }; up['stock/a/' + id] = Math.max(0, num(g('stock'))); nNew++; }
+  }
+  if (!await confirmDlg('Importar CSV', `Se crearán <b>${nNew}</b> artículos y se actualizarán <b>${nUpd}</b> (coincidencia por SKU; el stock de existentes no se modifica).`, 'Importar')) return;
+  try { await db.ref().update(up); toast(`Importados: ${nNew} nuevos, ${nUpd} actualizados`); } catch (err) { toast(err.message, 'bad'); }
+});
+
+/* ============================== arranque ============================== */
+function gate(html) { $('#gate').classList.remove('hide'); $('#gateCard').innerHTML = html; }
+const LOGO = `<div class="brand"><div class="mk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div></div>`;
+function boot() {
+  if (!CONFIG.firebase.apiKey || !CONFIG.firebase.databaseURL) {
+    gate(`${LOGO}<h1>Configuración pendiente</h1><p>Completá el objeto <code>CONFIG</code> al inicio del script con los datos de tu proyecto Firebase y la URL del Web App de Apps Script. Los pasos están en el archivo LEEME.</p>`);
+    return;
+  }
+  firebase.initializeApp(CONFIG.firebase);
+  auth = firebase.auth(); db = firebase.database();
+  auth.onAuthStateChanged(async u => {
+    if (!u) {
+      gate(`${LOGO}<h1>Gestor de inventario</h1><p>Iniciá sesión con tu cuenta de Google autorizada.</p><button class="btn pri" id="gLogin">Entrar con Google</button>`);
+      $('#gLogin').onclick = async () => {
+        const pr = new firebase.auth.GoogleAuthProvider(); pr.setCustomParameters({ prompt: 'select_account' });
+        try { await auth.signInWithPopup(pr); }
+        catch (err) { if (/popup/.test(err.code || '')) auth.signInWithRedirect(pr); else toast(err.message, 'bad'); }
+      };
+      return;
+    }
+    let ok = false;
+    try { ok = (await db.ref('permitidos/' + emailKey(u.email)).get()).val() === true; } catch (_) { ok = false; }
+    if (!ok) {
+      gate(`${LOGO}<h1>Acceso no autorizado</h1><p>La cuenta <b>${esc(u.email)}</b> no está en la lista de usuarios permitidos. El administrador debe agregar en la base de datos:</p>
+        <pre>permitidos/${esc(emailKey(u.email))} : true</pre><button class="btn" id="gOut">Usar otra cuenta</button>`);
+      $('#gOut').onclick = () => auth.signOut();
+      return;
+    }
+    S.user = u; startApp();
+  });
+}
+function startApp() {
+  $('#gate').classList.add('hide');
+  const u = S.user;
+  $('#uav').innerHTML = u.photoURL ? `<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer">` : esc((u.displayName || u.email)[0].toUpperCase());
+  $('#uwho').textContent = (u.displayName ? u.displayName + ' · ' : '') + u.email;
+  $('#invGrid').innerHTML = '<div class="empty">Cargando inventario…</div>';
+  db.ref('articulos').on('value', s => { S.art = s.val() || {}; S.loaded.art = true; sched(); });
+  db.ref('productos').on('value', s => { S.prod = s.val() || {}; S.loaded.prod = true; sched(); });
+  db.ref('stock').on('value', s => { const v = s.val() || {}; S.stock = { a: v.a || {}, p: v.p || {} }; S.loaded.stock = true; sched(); });
+  db.ref('movimientos').orderByChild('t').limitToLast(500).on('value', s => {
+    const arr = []; s.forEach(c => { arr.push({ id: c.key, ...c.val() }); }); S.mov = arr.reverse(); if (S.view === 'mov') renderMov();
+  });
+  db.ref('.info/connected').on('value', s => { const on = !!s.val(); $('#conn').classList.toggle('on', on); $('#conn span').textContent = on ? 'En línea' : 'Sin conexión'; });
+}
+boot();
+</script>
+</body>
+</html>
