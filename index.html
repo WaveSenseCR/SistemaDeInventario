@@ -59,6 +59,65 @@ main{max-width:1400px;margin:0 auto;padding:18px 16px 60px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13px}
 .chip.on{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+:root{--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c4:#eda100;--c5:#e87ba4}
+@media (prefers-color-scheme:dark){:root{--c1:#3987e5;--c2:#d95926;--c3:#199e70;--c4:#c98500;--c5:#d55181}}
+.grp{margin-bottom:20px}
+.grp>h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:14px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px}
+.grp>h3::after{content:"";flex:1;height:1px;background:var(--line)}
+.tl{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.flow{position:relative;display:flex;flex-direction:column;gap:10px}
+.step{display:flex;gap:12px;position:relative}
+.step:not(:last-child)::before{content:"";position:absolute;left:15px;top:34px;bottom:-12px;width:2px;background:var(--line)}
+.snum{width:32px;height:32px;border-radius:50%;flex:none;display:grid;place-items:center;font:600 13px var(--mono);background:var(--acc-soft);color:var(--acc);border:1px solid var(--acc);z-index:1}
+.snum.m{background:var(--panel2);color:var(--mute);border-color:var(--line)}
+.sbody{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+.shead{display:flex;align-items:flex-start;gap:6px}
+.shead b{font-weight:600;overflow-wrap:anywhere}
+.sact{display:flex;gap:2px;margin-left:auto;flex:none}
+.sact button{border:0;background:none;width:26px;height:26px;border-radius:6px;cursor:pointer;color:var(--mute)}
+.sact button:hover{background:var(--panel);color:var(--ink)}
+.sline{font-size:12px;color:var(--mute);margin-top:4px;display:flex;flex-wrap:wrap;gap:4px 12px}
+.sline b{color:var(--ink);font-family:var(--mono);font-weight:500}
+.scost{margin-top:6px;font-family:var(--mono);font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.kpis div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.kpis span{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}
+.kpis b{font-family:var(--mono);font-size:17px;font-weight:600;overflow-wrap:anywhere}
+.kpis .hero{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}.kpis .hero b{font-size:24px;color:var(--acc);white-space:nowrap}.kpis b{white-space:nowrap}
+.sbar{display:flex;gap:2px;height:26px;margin:4px 0 10px}
+.sbar i{display:block;height:100%;min-width:3px}
+.sbar i:first-child{border-radius:4px 0 0 4px}.sbar i:last-child{border-radius:0 4px 4px 0}.sbar i:only-child{border-radius:4px}
+.vleg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--mute)}
+.vleg span{display:flex;align-items:center;gap:6px}
+.vleg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.vleg b{color:var(--ink);font-family:var(--mono);font-weight:500}
+.gantt{display:grid;grid-template-columns:minmax(80px,160px) 1fr;gap:6px 10px;align-items:center;font-size:12px}
+.gantt .gl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute)}
+.gantt .gt{position:relative;height:18px;background:var(--panel2);border-radius:4px}
+.gantt .gt i{position:absolute;top:2px;bottom:2px;background:var(--c1);border-radius:4px;min-width:3px}
+.gantt .gt i.crit{background:var(--c2)}
+.gantt .gt u{position:absolute;top:8px;height:2px;border-top:2px dotted var(--mute);opacity:.7}
+.gantt .gt b{position:absolute;top:-1px;bottom:-1px;width:2px;background:var(--ink);opacity:.35}
+.deprow{display:grid;grid-template-columns:auto 1fr 120px;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)}
+.deprow:last-child{border-bottom:0}
+.deprow input[type=checkbox]{width:16px;height:16px;accent-color:var(--acc)}
+.deprow .pc{display:flex;align-items:center;gap:4px}
+.deprow .pc input{width:70px;text-align:right}
+.deprow.off{opacity:.45}
+@media (max-width:640px){.deprow{grid-template-columns:auto 1fr}.deprow .pc{grid-column:2}}
+.gantt .gv{position:absolute;top:0;line-height:18px;font-family:var(--mono);font-size:11px;color:var(--ink);white-space:nowrap;padding-left:6px}
+.tbl tr.tot td{font-weight:600;border-top:2px solid var(--line)}
+.tbl tr.click{cursor:pointer}.tbl tr.click:hover td{background:var(--panel2)}
+.chk{display:flex;align-items:center;gap:10px;padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--line)}
+.chk:last-child{border-bottom:0}
+.chk:hover{background:var(--panel2)}
+.chk input{width:16px;height:16px;accent-color:var(--acc);flex:none}
+.xrow{display:grid;grid-template-columns:1fr 110px 96px 32px;gap:6px;margin-bottom:6px}
+.rrow{display:grid;grid-template-columns:1fr 130px 32px;gap:6px;margin-bottom:6px}
+.sub{font-size:12px;color:var(--mute);font-weight:500;grid-column:1/-1;margin-top:4px;text-transform:uppercase;letter-spacing:.4px}
+#vtip{position:fixed;z-index:70;pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:8px;padding:7px 10px;font-size:12px;display:none;max-width:260px}
+#vtip b{font-family:var(--mono)}
+@media (max-width:640px){.xrow{grid-template-columns:1fr 90px;}.rrow{grid-template-columns:1fr 100px 32px}}
 .segtabs{display:inline-flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;max-width:100%;overflow-x:auto}
 .segtabs button{border:0;background:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-weight:500;color:var(--mute);white-space:nowrap;display:flex;align-items:center;gap:6px}
 .segtabs button.on{background:var(--acc-soft);color:var(--acc)}
@@ -146,7 +205,7 @@ dialog{border:0;border-radius:14px;padding:0;background:var(--panel);color:var(-
 dialog::backdrop{background:rgba(10,14,12,.45)}
 dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
 .dh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
-.db{padding:16px 18px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.db{padding:16px 18px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:max-content;align-content:start;gap:12px}
 .df{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
 .imgpick{grid-column:1/-1;display:flex;gap:12px;align-items:center}
 .imgpick .thumb{width:96px;height:96px;aspect-ratio:auto;border-radius:8px;flex:none;border:1px solid var(--line)}
@@ -186,7 +245,9 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
   <div class="brand"><div class="mk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div><span>Inventario · Fabricación</span></div>
   <nav class="tabs" id="tabs">
     <button class="tab on" data-v="inv">Inventario</button>
+    <button class="tab" data-v="herr">Herramientas</button>
     <button class="tab" data-v="prod">Productos</button>
+    <button class="tab" data-v="procs">Procesos</button>
     <button class="tab" data-v="fab">Fabricar</button>
     <button class="tab" data-v="mov">Movimientos</button>
   </nav>
@@ -231,6 +292,72 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
     <div class="grid" id="invGrid"></div>
   </section>
 
+  <!-- HERRAMIENTAS -->
+  <section class="view" id="v-herr">
+    <div class="stats" id="herrStats"></div>
+    <div class="toolbar">
+      <input class="inp search" id="herrQ" placeholder="Buscar herramienta, código, marca…">
+      <select class="inp" id="herrEst">
+        <option value="">Todos los estados</option><option value="operativa">Operativa</option><option value="mantenimiento">En mantenimiento</option>
+        <option value="danada">Dañada</option><option value="baja">De baja</option><option value="_prest">Prestadas</option>
+      </select>
+      <select class="inp" id="herrGrp">
+        <option value="ubicacion">Agrupar por ubicación</option><option value="categoria">Agrupar por categoría</option>
+        <option value="responsable">Agrupar por responsable</option><option value="">Sin agrupar</option>
+      </select>
+      <div class="sp"></div>
+      <button class="btn pri" id="herrNew">+ Herramienta</button>
+    </div>
+    <div id="herrBody"></div>
+  </section>
+
+  <!-- PROCESOS (lista) -->
+  <section class="view" id="v-procs">
+    <div class="toolbar">
+      <input class="inp search" id="procsQ" placeholder="Buscar producto…">
+      <div class="sp"></div>
+      <button class="btn" id="cfgBtn">Tarifas y parámetros</button>
+      <button class="btn" id="procsCsv">Exportar resumen (CSV)</button>
+    </div>
+    <div class="card"><div class="tblwrap"><table class="tbl" id="procsTbl"></table></div></div>
+    <p class="lim" style="margin-top:8px">Costo por unidad al tamaño de lote definido en cada proceso. Incluye el costo completo de los subensambles (materiales + proceso).</p>
+  </section>
+
+  <!-- PROCESO (editor) -->
+  <section class="view" id="v-proc">
+    <div class="dethead">
+      <button class="btn ghost" id="procBack">← Procesos</button>
+      <h2 id="procName"></h2>
+      <div class="sp"></div>
+      <label class="inl">Lote <input class="inp mono" type="number" id="procLote" min="1" step="1" value="1"> und</label>
+      <button class="btn" id="procCfg">Tarifas</button>
+      <button class="btn" id="procCsv">Exportar desglose</button>
+      <button class="btn" id="procProd">Ver producto</button>
+    </div>
+    <div class="detgrid">
+      <div class="card pad">
+        <div class="sechead"><h3>Etapas del proceso</h3><span class="badge" id="procCount"></span><div class="sp"></div><button class="btn sm pri" id="stepAdd">+ Etapa</button></div>
+        <div class="flow" id="flow"></div>
+      </div>
+      <div class="col">
+        <div class="card pad">
+          <div class="sechead"><h3>Costo total</h3><span class="lim" id="procLoteLbl"></span></div>
+          <div class="kpis" id="procKpi"></div>
+          <div class="sbar" id="procBar"></div>
+          <div class="vleg" id="procLeg"></div>
+        </div>
+        <div class="card pad">
+          <div class="sechead"><h3>Desglose</h3></div>
+          <div class="tblwrap"><table class="tbl" id="procDesg"></table></div>
+        </div>
+        <div class="card pad">
+          <div class="sechead"><h3>Cronograma del lote</h3><span class="lim" id="ganttLbl"></span></div>
+          <div class="gantt" id="procGantt"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- PRODUCTOS -->
   <section class="view" id="v-prod">
     <div class="toolbar">
@@ -248,6 +375,7 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
       <h2 id="detName"></h2>
       <div class="sp"></div>
       <button class="btn" id="detEdit">Editar</button>
+      <button class="btn" id="detProc">Proceso y costos</button>
       <button class="btn pri" id="detFab">Fabricar</button>
       <button class="btn ghost danger" id="detDel">Eliminar</button>
     </div>
@@ -300,7 +428,7 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
       <select class="inp" id="movT">
         <option value="">Todos los tipos</option>
         <option value="entrada">Entrada</option><option value="salida">Salida</option><option value="ajuste">Ajuste</option>
-        <option value="alta">Alta</option><option value="fabricacion">Fabricación</option><option value="consumo">Consumo</option>
+        <option value="alta">Alta</option><option value="fabricacion">Fabricación</option><option value="consumo">Consumo</option><option value="prestamo">Préstamo</option><option value="devolucion">Devolución</option>
       </select>
       <div class="sp"></div>
       <span class="lim">Últimos 500 movimientos</span>
@@ -383,6 +511,86 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
   <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri" id="movSave">Registrar</button></div>
 </form></dialog>
 
+<!-- Diálogo herramienta -->
+<dialog id="dlgHerr"><form id="fHerr" method="dialog">
+  <div class="dh"><h3 id="herrTitle">Herramienta</h3><div class="sp"></div><button type="button" class="btn ghost danger sm" id="herrDel">Eliminar</button></div>
+  <div class="db">
+    <div class="imgpick">
+      <div class="thumb noimg" id="herrImgPrev"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label class="btn sm">Elegir / tomar foto<input type="file" accept="image/*" id="herrImg" hidden></label>
+        <button type="button" class="btn sm ghost" id="herrImgRm">Quitar imagen</button>
+      </div>
+    </div>
+    <label class="fld full"><span>Nombre *</span><input class="inp" name="nombre" required></label>
+    <label class="fld"><span>Código / activo</span><input class="inp mono" name="codigo"></label>
+    <label class="fld"><span>Categoría</span><input class="inp" name="categoria" list="dlHCat" placeholder="Soldadura, medición…"></label>
+    <label class="fld"><span>Marca</span><input class="inp" name="marca"></label>
+    <label class="fld"><span>Modelo</span><input class="inp" name="modelo"></label>
+    <label class="fld"><span>N° de serie</span><input class="inp mono" name="serie"></label>
+    <label class="fld"><span>Estado</span><select class="inp" name="estado"><option value="operativa">Operativa</option><option value="mantenimiento">En mantenimiento</option><option value="danada">Dañada</option><option value="baja">De baja</option></select></label>
+    <label class="fld"><span>Ubicación</span><input class="inp" name="ubicacion" list="dlHUbi" placeholder="Taller, estante, gaveta…"></label>
+    <label class="fld"><span>Responsable</span><input class="inp" name="responsable" list="dlHResp"></label>
+    <label class="fld full"><span>Prestada a (vacío = disponible)</span><input class="inp" name="prestadaA" placeholder="Nombre / proyecto"></label>
+    <p class="sub">Costo de uso</p>
+    <label class="fld"><span>Costo de adquisición</span><input class="inp mono" name="costoAdq" type="number" step="any" min="0"></label>
+    <label class="fld"><span>Vida útil (horas de uso)</span><input class="inp mono" name="vidaHoras" type="number" step="any" min="0"></label>
+    <label class="fld"><span>Costo por hora (manual)</span><input class="inp mono" name="costoHora" type="number" step="any" min="0"></label>
+    <div class="fld"><span>Costo/h aplicado</span><div class="stk" id="herrRate" style="padding:6px 0">—</div></div>
+    <label class="fld"><span>Fecha de compra</span><input class="inp" name="fechaCompra" type="date"></label>
+    <label class="fld full"><span>Notas</span><textarea class="inp" name="notas" rows="2"></textarea></label>
+    <p class="hint" id="herrUso"></p>
+  </div>
+  <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri" id="herrSave">Guardar</button></div>
+</form></dialog>
+
+<!-- Diálogo etapa -->
+<dialog id="dlgStep"><form id="fStep" method="dialog">
+  <div class="dh"><h3 id="stepTitle">Etapa</h3></div>
+  <div class="db">
+    <label class="fld full"><span>Nombre de la etapa *</span><input class="inp" name="nombre" required placeholder="Ej. Soldadura SMD, Ensamble, Prueba funcional"></label>
+    <label class="fld full"><span>Descripción / instrucciones</span><textarea class="inp" name="descripcion" rows="2"></textarea></label>
+    <p class="sub">Tiempo</p>
+    <label class="fld"><span>Preparación (min por lote)</span><input class="inp mono" name="tPrep" type="number" step="any" min="0" value="0"></label>
+    <label class="fld"><span>Ejecución (min por unidad)</span><input class="inp mono" name="tUnit" type="number" step="any" min="0" value="0"></label>
+    <p class="sub">Mano de obra</p>
+    <label class="fld"><span>Rol / tarifa</span><select class="inp" name="rol" id="stepRol"></select></label>
+    <label class="fld"><span>Operarios</span><input class="inp mono" name="operarios" type="number" step="1" min="0" value="1"></label>
+    <label class="fld" id="stepTarF"><span>Tarifa manual (por hora)</span><input class="inp mono" name="tarifa" type="number" step="any" min="0" value="0"></label>
+    <p class="sub">Herramientas utilizadas</p>
+    <input class="inp" id="stepHQ" placeholder="Filtrar herramientas…" style="grid-column:1/-1">
+    <div class="pick" id="stepHerr" style="max-height:190px"></div>
+    <p class="sub">Componentes que se integran en esta etapa</p>
+    <div class="pick" id="stepComp" style="max-height:160px"></div>
+    <p class="sub">Programación (inicio de la etapa)</p>
+    <label class="fld"><span>Inicio</span><select class="inp" name="inicio" id="stepIni">
+      <option value="serie">Al terminar la etapa anterior (serie)</option>
+      <option value="deps">Según dependencias (paralelo / % de avance)</option>
+    </select></label>
+    <label class="fld"><span>Espera antes de iniciar (min)</span><input class="inp mono" name="espera" type="number" step="any" min="0" value="0" placeholder="Curado, secado…"></label>
+    <div class="pick" id="stepDeps" style="max-height:220px"></div>
+    <p class="hint" id="stepDepsHint">Marcá las etapas de las que depende e indicá el % de avance que deben llevar: <b>0 %</b> = inicia en paralelo, <b>100 %</b> = inicia al terminar. Sin ninguna marcada, inicia al comienzo del lote. Si inicia antes de que la predecesora termine, no puede terminar antes que ella (procesa su última unidad).</p>
+    <p class="sub">Otros costos (consumibles, servicios, energía…)</p>
+    <div style="grid-column:1/-1"><div id="stepX"></div><button type="button" class="btn sm" id="stepXAdd">+ Costo</button></div>
+    <div class="fld full"><span>Costo estimado de la etapa</span><div class="stk" id="stepPrev" style="padding:4px 0">—</div></div>
+  </div>
+  <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri">Guardar</button></div>
+</form></dialog>
+
+<!-- Diálogo tarifas -->
+<dialog id="dlgCfg"><form id="fCfg" method="dialog">
+  <div class="dh"><h3>Tarifas y parámetros de costo</h3></div>
+  <div class="db">
+    <p class="sub">Roles de mano de obra (costo por hora, con cargas sociales)</p>
+    <div style="grid-column:1/-1"><div id="cfgRoles"></div><button type="button" class="btn sm" id="cfgRoleAdd">+ Rol</button></div>
+    <p class="sub">Parámetros</p>
+    <label class="fld"><span>Costos indirectos (% sobre costo directo)</span><input class="inp mono" name="indirectoPct" type="number" step="any" min="0"></label>
+    <label class="fld"><span>Margen para precio sugerido (%)</span><input class="inp mono" name="margenPct" type="number" step="any" min="0"></label>
+    <p class="hint">Indirectos: alquiler, servicios, administración, depreciación general. Se aplican sobre materiales + mano de obra + herramientas + otros costos.</p>
+  </div>
+  <div class="df"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn pri">Guardar</button></div>
+</form></dialog>
+
 <!-- Confirmación -->
 <dialog id="dlgOk"><form method="dialog">
   <div class="dh"><h3 id="okTitle">Confirmar</h3></div>
@@ -390,7 +598,7 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
   <div class="df"><button value="no" class="btn ghost">Cancelar</button><button value="si" class="btn pri" id="okBtn">Confirmar</button></div>
 </form></dialog>
 
-<datalist id="dlCat"></datalist>
+<datalist id="dlCat"></datalist><datalist id="dlHCat"></datalist><datalist id="dlHUbi"></datalist><datalist id="dlHResp"></datalist>
 <datalist id="dlUni"><option value="und"><option value="m"><option value="cm"><option value="kg"><option value="g"><option value="L"><option value="ml"><option value="par"><option value="rollo"><option value="caja"></datalist>
 <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
 <div class="toast" id="toast"></div>
@@ -428,7 +636,7 @@ const IMGERR = `onerror="this.parentNode.classList.add('noimg');this.remove()"`;
 const thumbHTML = (id, cls = 'thumb', sz = 400) => `<div class="${cls}${id ? '' : ' noimg'}">${id ? `<img loading="lazy" src="${thumbUrl(id, sz)}" alt="" ${IMGERR}>` : ''}</div>`;
 const fdate = t => t ? new Date(t).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '';
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const TIPOS = { entrada: ['Entrada', 'ok'], salida: ['Salida', 'warn'], ajuste: ['Ajuste', ''], alta: ['Alta', 'acc'], fabricacion: ['Fabricación', 'acc'], consumo: ['Consumo', 'bad'] };
+const TIPOS = { entrada: ['Entrada', 'ok'], salida: ['Salida', 'warn'], ajuste: ['Ajuste', ''], alta: ['Alta', 'acc'], fabricacion: ['Fabricación', 'acc'], consumo: ['Consumo', 'bad'], prestamo: ['Préstamo', 'warn'], devolucion: ['Devolución', 'ok'] };
 
 function toast(msg, cls = '') {
   const d = document.createElement('div'); d.className = cls; d.textContent = msg;
@@ -457,12 +665,13 @@ const S = {
   loaded: { art: false, prod: false, stock: false },
   view: 'inv', det: null, nDiag: 1, collapsed: new Set(), vb: null, vbPid: null,
   invLow: false, invSec: 'mat', ptAll: false, editArt: null, editProd: null, pendImg: null, imgRemove: false,
-  mov: [], movCtx: null, comp: null
+  mov: [], movCtx: null, comp: null,
+  herr: {}, cfg: {}, stepDeps: {}, procP: null, editHerr: null, editStep: null, stepTools: new Set(), stepComps: new Set()
 };
 let db, auth;
 const stA = id => +S.stock.a[id] || 0;
 const stP = id => +S.stock.p[id] || 0;
-const nameOf = (t, id) => ((t === 'p' ? S.prod : S.art)[id] || {}).nombre || '(eliminado)';
+const nameOf = (t, id) => ((t === 'p' ? S.prod : t === 't' ? S.herr : S.art)[id] || {}).nombre || '(eliminado)';
 const unitOf = id => (S.art[id] || {}).unidad || 'und';
 
 /* ===================== motor de cálculo (BOM) ===================== */
@@ -617,11 +826,14 @@ function render() {
   else if (S.view === 'det') renderDet();
   else if (S.view === 'fab') renderFab();
   else if (S.view === 'mov') renderMov();
+  else if (S.view === 'herr') renderHerr();
+  else if (S.view === 'procs') renderProcs();
+  else if (S.view === 'proc') renderProc();
 }
 function go(v, det) {
   S.view = v; if (det !== undefined) S.det = det;
   $$('.view').forEach(x => x.classList.toggle('on', x.id === 'v-' + v));
-  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.v === v || (v === 'det' && t.dataset.v === 'prod')));
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.v === v || (v === 'det' && t.dataset.v === 'prod') || (v === 'proc' && t.dataset.v === 'procs')));
   window.scrollTo(0, 0); render();
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) go(b.dataset.v); });
@@ -741,7 +953,7 @@ function renderProd() {
         <div class="meta mono">${esc([p.codigo, p.categoria].filter(Boolean).join(' · ') || '—')} · ${nb} comp.</div>
         <div class="cap"><b class="${c ? '' : 'zero'}">${fmt(c)}</b><span class="lim">und posibles</span></div>
         <div class="lim">${nb ? (lim.length ? 'Limita: <em>' + esc(lim.join(', ')) + '</em>' : '') : '<em>Sin lista de materiales</em>'}</div>
-        <div class="srow"><span class="lim">Armadas: <b class="mono">${fmt(stP(id))}</b> · ${money(costUnit(id))}/und</span></div>
+        <div class="srow"><span class="lim">Armadas: <b class="mono">${fmt(stP(id))}</b> · ${money(costo(id).total)}/und${pasos(id).length ? '' : ' (solo mat.)'}</span></div>
       </div></article>`;
   }).join('') : `<div class="empty">${Object.keys(S.prod).length ? 'Sin resultados.' : 'Aún no hay productos. Creá uno y agregale su lista de materiales.'}</div>`;
 }
@@ -765,6 +977,7 @@ function renderDet() {
         <div><span>Alcanza para</span><b style="color:var(--${c ? 'acc' : 'bad'})">${fmt(c)} und</b></div>
         <div><span>Armadas en stock</span><b>${fmt(stP(pid))}</b> <button class="btn sm ghost" id="detMov" style="padding:0 6px">±</button></div>
         <div><span>Costo materiales</span><b>${money(costUnit(pid))}</b></div>
+        <div><span>Costo total (con proceso)</span><b>${pasos(pid).length ? money(costo(pid).total) : '—'}</b></div>
       </div>
       ${nb && lim.length ? `<div class="lim" style="margin-top:8px">Material limitante: <em>${esc(lim.join(', '))}</em></div>` : ''}
     </div></div>`;
@@ -791,6 +1004,7 @@ function renderDet() {
 }
 $('#detBack').addEventListener('click', () => go('prod'));
 $('#detEdit').addEventListener('click', () => openProd(S.det));
+$('#detProc').addEventListener('click', () => openProc(S.det));
 $('#detFab').addEventListener('click', () => { $('#fabP').dataset.want = S.det; go('fab'); });
 $('#detDel').addEventListener('click', async () => {
   const pid = S.det, p = S.prod[pid]; const u = usedIn('p', pid);
@@ -935,7 +1149,12 @@ function renderFabPlan() {
       const st = f ? ['bad', 'Falta ' + fmt(f)] : (m > 0 && aft < m ? ['warn', 'Bajo mín.'] : ['ok', 'OK']);
       return `<tr class="${f ? 'bad' : (st[0] === 'warn' ? 'warn' : '')}"><td>${esc(nameOf('a', id))}</td><td class="n">${fmt(q)} ${esc(unitOf(id))}</td><td class="n">${fmt(s)}</td><td class="n">${fmt(Math.max(0, aft))}</td><td class="n">${money(q * num((S.art[id] || {}).costo))}</td><td class="n"><span class="badge ${st[0]}">${st[1]}</span></td></tr>`; }).join('')}
     </table></div>
-    <div class="lim" style="margin-top:8px">Costo total de materiales: <b class="mono">${money(costUnit(pid) * n)}</b></div>`;
+    <div class="lim" style="margin-top:8px">Costo total de materiales: <b class="mono">${money(costUnit(pid) * n)}</b></div>
+    ${pasos(pid).length || Object.keys(pl.build).some(id => pasos(id).length) ? (() => {
+      const c = costo(pid, n); let tl = c.minLote;
+      for (const [id, q] of Object.entries(pl.build)) tl += pasos(id).reduce((s, [, st]) => s + num(st.tPrep) + num(st.tUnit) * q, 0);
+      return `<div class="lim">Costo total estimado (materiales + proceso + indirectos, lote ${fmt(n)}): <b class="mono">${money(c.total * n)}</b> · Horas de trabajo: <b class="mono">${fmtMin(tl)}</b> · Duración del proceso final (según cronograma): <b class="mono">${fmtMin(c.durLote)}</b></div>`;
+    })() : ''}`;
 }
 $('#fabP').addEventListener('change', renderFabPlan);
 $('#fabN').addEventListener('input', renderFabPlan);
@@ -966,16 +1185,16 @@ function renderMov() {
   $('#movTbl').innerHTML = list.length ? `<tr><th>Fecha</th><th>Tipo</th><th>Ítem</th><th class="n">Cantidad</th><th class="n">Antes → Después</th><th>Usuario</th><th>Nota</th></tr>` +
     list.map(m => { const [lbl, cls] = TIPOS[m.tipo] || [m.tipo, ''];
       return `<tr><td class="mono" style="white-space:nowrap">${fdate(m.t)}</td><td><span class="badge ${cls}">${lbl}</span></td>
-      <td>${esc(m.nombre)}${m.rt === 'p' ? ' <span class="badge">prod</span>' : ''}</td>
-      <td class="n" style="color:var(--${m.cant >= 0 ? 'ok' : 'bad'})">${m.cant > 0 ? '+' : ''}${fmt(m.cant)}</td>
-      <td class="n">${fmt(m.antes)} → ${fmt(m.despues)}</td><td class="meta">${esc((m.u || '').split('@')[0])}</td>
+      <td>${esc(m.nombre)}${m.rt === 'p' ? ' <span class="badge">prod</span>' : m.rt === 't' ? ' <span class="badge">herr</span>' : ''}</td>
+      ${m.rt === 't' ? '<td class="n">—</td><td class="n">—</td>' : `<td class="n" style="color:var(--${m.cant >= 0 ? 'ok' : 'bad'})">${m.cant > 0 ? '+' : ''}${fmt(m.cant)}</td>
+      <td class="n">${fmt(m.antes)} → ${fmt(m.despues)}</td>`}<td class="meta">${esc((m.u || '').split('@')[0])}</td>
       <td>${esc([m.nota, m.sub ? 'Sub: ' + m.sub : ''].filter(Boolean).join(' · '))}</td></tr>`; }).join('')
     : '<tr><td class="empty">Sin movimientos.</td></tr>';
 }
 $('#movQ').addEventListener('input', renderMov); $('#movT').addEventListener('change', renderMov);
 $('#movCsv').addEventListener('click', () => {
   const rows = [['Fecha', 'Tipo', 'Item', 'Clase', 'Cantidad', 'Antes', 'Despues', 'Usuario', 'Nota', 'Lote']];
-  movFiltered().forEach(m => rows.push([fdate(m.t), m.tipo, m.nombre, m.rt === 'p' ? 'producto' : 'articulo', m.cant, m.antes, m.despues, m.u, [m.nota, m.sub].filter(Boolean).join(' | '), m.lote || '']));
+  movFiltered().forEach(m => rows.push([fdate(m.t), m.tipo, m.nombre, m.rt === 'p' ? 'producto' : m.rt === 't' ? 'herramienta' : 'articulo', m.cant, m.antes, m.despues, m.u, [m.nota, m.sub].filter(Boolean).join(' | '), m.lote || '']));
   download('movimientos.csv', toCSV(rows), 'text/csv');
 });
 
@@ -1120,12 +1339,494 @@ $('#fMov').addEventListener('submit', async e => {
   finally { b.disabled = false; }
 });
 
+/* ======================= motor de costos (procesos) ======================= */
+const ESTADOS = { operativa: ['Operativa', 'ok'], mantenimiento: ['Mantenimiento', 'warn'], danada: ['Dañada', 'bad'], baja: ['De baja', ''] };
+const CATS = [['mat', 'Materiales', '--c1'], ['mo', 'Mano de obra', '--c2'], ['herr', 'Herramientas', '--c3'], ['otros', 'Otros costos', '--c4'], ['ind', 'Indirectos', '--c5']];
+const fmtMin = m => !isFinite(m) || m <= 0 ? '0 min' : (m < 60 ? fmt(Math.round(m * 10) / 10) + ' min' : fmt(Math.round(m / 60 * 100) / 100) + ' h');
+const pct = (a, b) => b > 0 ? fmt(Math.round(a / b * 1000) / 10) + ' %' : '—';
+function toolRate(id) {
+  const h = S.herr[id] || {}, m = num(h.costoHora);
+  if (m > 0) return m;
+  const a = num(h.costoAdq), v = num(h.vidaHoras);
+  return a > 0 && v > 0 ? a / v : 0;
+}
+const roles = () => (S.cfg && S.cfg.roles) || {};
+function roleRate(st) {
+  if (st.rol && st.rol !== '_m') { const r = roles()[st.rol]; return r ? num(r.costoHora) : 0; }
+  return num(st.tarifa);
+}
+function roleName(st) { return st.rol && st.rol !== '_m' ? ((roles()[st.rol] || {}).nombre || '(rol eliminado)') : 'Tarifa manual'; }
+const procOf = pid => (S.prod[pid] || {}).proceso || {};
+const pasos = pid => Object.entries(procOf(pid).pasos || {}).sort((a, b) => (num(a[1].orden) - num(b[1].orden)) || a[0].localeCompare(b[0]));
+const loteOf = pid => Math.max(1, Math.floor(num(procOf(pid).lote)) || 1);
+function stepCost(st, L) {
+  const minU = num(st.tPrep) / L + num(st.tUnit), hU = minU / 60;
+  const ops = st.operarios === 0 || st.operarios === '0' ? 0 : Math.max(0, num(st.operarios) || 1);
+  const mo = hU * ops * roleRate(st);
+  const herr = hU * Object.keys(st.herramientas || {}).reduce((s, id) => s + toolRate(id), 0);
+  let otros = 0;
+  for (const c of Object.values(st.extras || {})) otros += c.por === 'lote' ? num(c.monto) / L : num(c.monto);
+  return { minU, minLote: num(st.tPrep) + num(st.tUnit) * L, mo, herr, otros, tot: mo + herr + otros };
+}
+// Desglose por unidad, incluyendo el costo completo de los subensambles (con su propio lote).
+function costo(pid, L, d = 0) {
+  L = L || loteOf(pid);
+  const r = { mat: 0, mo: 0, herr: 0, otros: 0, ind: 0, min: 0, minPropio: 0, minLote: 0, steps: [], matDir: 0, subs: [] };
+  if (d > 25 || !S.prod[pid]) return r;
+  for (const [cid, c] of Object.entries(S.prod[pid].bom || {})) {
+    const q = +c.q || 0;
+    if (c.t === 'p') {
+      const s = costo(cid, null, d + 1);
+      for (const k of ['mat', 'mo', 'herr', 'otros', 'ind', 'min']) r[k] += q * s[k];
+      r.subs.push({ id: cid, q, unit: s.total, tot: q * s.total, min: q * s.min });
+    } else { const v = q * num((S.art[cid] || {}).costo); r.mat += v; r.matDir += v; }
+  }
+  let own = r.matDir;
+  for (const [sid, st] of pasos(pid)) {
+    const c = stepCost(st, L);
+    r.steps.push({ id: sid, st, ...c });
+    r.mo += c.mo; r.herr += c.herr; r.otros += c.otros; r.minPropio += c.minU; r.minLote += c.minLote; own += c.tot;
+  }
+  r.min += r.minPropio;
+  r.crono = cronograma(pid, L); r.durLote = r.crono.end;
+  r.ind += own * num(S.cfg.indirectoPct) / 100;
+  r.directo = r.mat + r.mo + r.herr + r.otros;
+  r.total = r.directo + r.ind;
+  r.precio = r.total * (1 + num(S.cfg.margenPct) / 100);
+  return r;
+}
+function usoHerr() {
+  const m = {};
+  for (const [pid, p] of Object.entries(S.prod))
+    for (const [sid, st] of Object.entries((p.proceso || {}).pasos || {}))
+      for (const hid of Object.keys(st.herramientas || {})) (m[hid] = m[hid] || []).push({ pid, sid, prod: p.nombre, paso: st.nombre });
+  return m;
+}
+
+/* ---- cronograma: serie / paralelo / inicio por % de avance ---- */
+function predsOf(list, i) {
+  const [k, st] = list[i];
+  if ((st.inicio || 'serie') === 'serie') return i > 0 ? [[list[i - 1][0], 100]] : [];
+  const ids = new Set(list.map(x => x[0]));
+  return Object.entries(st.deps || {}).filter(([p]) => p !== k && ids.has(p)).map(([p, d]) => [p, Math.min(100, Math.max(0, num(d && d.pct)))]);
+}
+function dependsOn(list, from, target, seen = new Set()) {
+  if (from === target) return true;
+  if (seen.has(from)) return false; seen.add(from);
+  const i = list.findIndex(x => x[0] === from); if (i < 0) return false;
+  return predsOf(list, i).some(([p]) => dependsOn(list, p, target, seen));
+}
+function cronograma(pid, L, listOverride) {
+  const list = listOverride || pasos(pid), idx = {}, res = {}, busy = new Set();
+  list.forEach(([k], i) => { idx[k] = i; });
+  const calc = i => {
+    const [k, st] = list[i];
+    if (res[k]) return res[k];
+    const d = num(st.tPrep) + num(st.tUnit) * L;
+    if (busy.has(k)) return { s: 0, e: d, d, preds: [], cyc: true };
+    busy.add(k);
+    const preds = predsOf(list, i);
+    let s = 0, minEnd = 0;
+    for (const [p, pc] of preds) {
+      const r = calc(idx[p]);
+      s = Math.max(s, r.s + r.d * pc / 100);
+      if (pc < 100) minEnd = Math.max(minEnd, r.e + num(st.tUnit));
+    }
+    s += num(st.espera);
+    busy.delete(k);
+    return (res[k] = { s, e: Math.max(s + d, minEnd), d, preds });
+  };
+  list.forEach((_, i) => calc(i));
+  const end = list.length ? Math.max(...list.map(([k]) => res[k].e)) : 0;
+  // ruta crítica: retroceder desde la(s) etapa(s) que terminan al final
+  const crit = new Set(), eps = 1e-6;
+  const mark = k => {
+    if (crit.has(k)) return; crit.add(k);
+    const r = res[k], st = list[idx[k]][1];
+    for (const [p, pc] of r.preds) {
+      const q = res[p];
+      const startBind = Math.abs(q.s + q.d * pc / 100 + num(st.espera) - r.s) < eps;
+      const endBind = pc < 100 && Math.abs(q.e + num(st.tUnit) - r.e) < eps && r.e > r.s + r.d + eps;
+      if (startBind || endBind) mark(p);
+    }
+  };
+  list.forEach(([k]) => { if (Math.abs(res[k].e - end) < eps && end > 0) mark(k); });
+  return { res, end, crit, trabajo: list.reduce((a, [k]) => a + res[k].d, 0) };
+}
+function inicioTxt(list, i, cr) {
+  const st = list[i][1], pr = predsOf(list, i), nm = p => '«' + ((list.find(x => x[0] === p) || [, {}])[1].nombre || '?') + '»';
+  let t;
+  if (!pr.length) t = (st.inicio === 'deps') ? 'Inicia al comienzo del lote' : 'Primera etapa';
+  else if ((st.inicio || 'serie') === 'serie') t = 'En serie, después de ' + nm(pr[0][0]);
+  else t = pr.map(([p, pc]) => pc >= 100 ? 'al terminar ' + nm(p) : pc <= 0 ? 'en paralelo con ' + nm(p) : `con ${fmt(pc)}% de ${nm(p)}`).join(' y ');
+  if (num(st.espera)) t += ` + espera ${fmtMin(num(st.espera))}`;
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+/* ---- tooltip de gráficos ---- */
+const vtip = document.createElement('div'); vtip.id = 'vtip'; document.body.appendChild(vtip);
+document.addEventListener('pointermove', e => {
+  const t = e.target.closest && e.target.closest('[data-tip]');
+  if (!t) { vtip.style.display = 'none'; return; }
+  vtip.innerHTML = t.dataset.tip.split('|').map((l, i) => i ? esc(l) : '<b>' + esc(l) + '</b>').join('<br>');
+  vtip.style.display = 'block';
+  vtip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - vtip.offsetWidth - 8)) + 'px';
+  vtip.style.top = Math.min(e.clientY + 16, innerHeight - vtip.offsetHeight - 8) + 'px';
+});
+
+/* ============================ HERRAMIENTAS ============================ */
+function renderHerr() {
+  const all = Object.entries(S.herr), uso = usoHerr();
+  const q = norm($('#herrQ').value), est = $('#herrEst').value, grp = $('#herrGrp').value;
+  let op = 0, mant = 0, prest = 0, val = 0;
+  for (const [, h] of all) { const e = h.estado || 'operativa'; if (e === 'operativa') op++; if (e === 'mantenimiento' || e === 'danada') mant++; if (h.prestadaA) prest++; val += num(h.costoAdq); }
+  $('#herrStats').innerHTML = `
+    <div class="stat"><b>${all.length}</b><span>Herramientas</span></div>
+    <div class="stat"><b>${op}</b><span>Operativas</span></div>
+    <div class="stat warn"><b>${mant}</b><span>Mant. / dañadas</span></div>
+    <div class="stat"><b>${prest}</b><span>Prestadas</span></div>
+    <div class="stat"><b>${money(val)}</b><span>Valor de adquisición</span></div>`;
+  const uniq = k => [...new Set(all.map(([, h]) => h[k]).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es')).map(v => `<option value="${esc(v)}">`).join('');
+  $('#dlHCat').innerHTML = uniq('categoria'); $('#dlHUbi').innerHTML = uniq('ubicacion'); $('#dlHResp').innerHTML = uniq('responsable');
+  const list = all.filter(([, h]) => {
+    if (est === '_prest' && !h.prestadaA) return false;
+    if (est && est !== '_prest' && (h.estado || 'operativa') !== est) return false;
+    return !q || norm([h.nombre, h.codigo, h.marca, h.modelo, h.serie, h.categoria, h.ubicacion, h.responsable, h.prestadaA].join(' ')).includes(q);
+  }).sort((x, y) => (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'));
+  if (!list.length) { $('#herrBody').innerHTML = `<div class="grid"><div class="empty">${all.length ? 'Sin resultados con estos filtros.' : 'Aún no hay herramientas registradas.'}</div></div>`; return; }
+  const card = ([id, h]) => {
+    const [el, ec] = ESTADOS[h.estado || 'operativa'] || ESTADOS.operativa, u = uso[id] || [], r = toolRate(id);
+    return `<article class="card item${h.estado === 'baja' ? ' dim' : ''}" data-hid="${id}">
+      ${thumbHTML(h.thumbId)}
+      <div class="body">
+        <div class="nm">${esc(h.nombre)}</div>
+        <div class="meta mono">${esc([h.codigo, [h.marca, h.modelo].filter(Boolean).join(' ')].filter(Boolean).join(' · ') || '—')}</div>
+        <div class="tl"><span class="badge ${ec}">${el}</span>${h.prestadaA ? `<span class="badge warn">Prestada: ${esc(h.prestadaA)}</span>` : ''}</div>
+        <div class="lim">${esc([grp !== 'ubicacion' && h.ubicacion, grp !== 'responsable' && h.responsable].filter(Boolean).join(' · '))}</div>
+        <div class="srow"><span class="lim">${r ? `<b class="mono">${money(r)}</b>/h` : 'Sin costo/h'}</span><span class="lim" style="margin-left:auto">${u.length ? `En ${u.length} etapa${u.length > 1 ? 's' : ''}` : 'Sin uso'}</span></div>
+      </div></article>`;
+  };
+  if (!grp) { $('#herrBody').innerHTML = `<div class="grid">${list.map(card).join('')}</div>`; return; }
+  const groups = {};
+  for (const e of list) { const k = e[1][grp] || '(Sin ' + ({ ubicacion: 'ubicación', categoria: 'categoría', responsable: 'responsable' }[grp]) + ')'; (groups[k] = groups[k] || []).push(e); }
+  $('#herrBody').innerHTML = Object.keys(groups).sort((a, b) => (a.startsWith('(') - b.startsWith('(')) || a.localeCompare(b, 'es'))
+    .map(k => `<section class="grp"><h3>${esc(k)} <span class="badge">${groups[k].length}</span></h3><div class="grid">${groups[k].map(card).join('')}</div></section>`).join('');
+}
+['input', 'change'].forEach(ev => ['#herrQ', '#herrEst', '#herrGrp'].forEach(s => $(s).addEventListener(ev, sched)));
+$('#herrBody').addEventListener('click', e => { const c = e.target.closest('[data-hid]'); if (c) openHerr(c.dataset.hid); });
+$('#herrNew').addEventListener('click', () => openHerr(null));
+imgPicker('#herrImg', '#herrImgPrev', '#herrImgRm');
+
+const HFIELDS = ['nombre', 'codigo', 'categoria', 'marca', 'modelo', 'serie', 'estado', 'ubicacion', 'responsable', 'prestadaA', 'costoAdq', 'vidaHoras', 'costoHora', 'fechaCompra', 'notas'];
+function openHerr(id) {
+  const h = id ? S.herr[id] : null, f = $('#fHerr');
+  S.editHerr = id; S.pendImg = null; S.imgRemove = false; f.reset();
+  $('#herrTitle').textContent = h ? 'Editar herramienta' : 'Nueva herramienta';
+  $('#herrDel').classList.toggle('hide', !h);
+  HFIELDS.forEach(k => { if (h && h[k] != null && h[k] !== '') f.elements[k].value = h[k]; });
+  if (!h) f.elements.estado.value = 'operativa';
+  setPrev('#herrImgPrev', h && h.thumbId);
+  const u = (id && usoHerr()[id]) || [];
+  $('#herrUso').innerHTML = u.length ? 'Usada en: ' + u.map(x => `<b>${esc(x.prod)}</b> › ${esc(x.paso)}`).join(', ') : '';
+  updHerrRate(); $('#dlgHerr').showModal();
+}
+function updHerrRate() {
+  const E = $('#fHerr').elements, m = num(E.costoHora.value), a = num(E.costoAdq.value), v = num(E.vidaHoras.value);
+  $('#herrRate').innerHTML = m > 0 ? money(m) + ' <span class="lim">manual</span>' : (a > 0 && v > 0 ? money(a / v) + ' <span class="lim">adq. ÷ vida útil</span>' : '—');
+}
+$('#fHerr').addEventListener('input', updHerrRate);
+$('#fHerr').addEventListener('submit', async e => {
+  e.preventDefault();
+  const E = e.target.elements, isNew = !S.editHerr, id = S.editHerr || db.ref('herramientas').push().key, prev = S.herr[id] || {};
+  const nombre = E.nombre.value.trim(); if (!nombre) return;
+  const TS = firebase.database.ServerValue.TIMESTAMP, obj = {};
+  for (const k of HFIELDS) obj[k] = ['costoAdq', 'vidaHoras', 'costoHora'].includes(k) ? num(E[k].value) : E[k].value.trim();
+  obj.thumbId = S.imgRemove ? null : (prev.thumbId || null); obj.creado = prev.creado || TS; obj.actualizado = TS;
+  const btn = $('#herrSave'); btn.disabled = true; btn.textContent = 'Guardando…';
+  try {
+    if (S.pendImg) { btn.textContent = 'Subiendo imagen…'; try { obj.thumbId = await uploadImg(S.pendImg, nombre, prev.thumbId); } catch (err) { toast('Imagen no subida: ' + err.message, 'bad'); } }
+    else if (S.imgRemove && prev.thumbId) delImg(prev.thumbId);
+    await db.ref('herramientas/' + id).set(obj);
+    const pa = prev.prestadaA || '', pn = obj.prestadaA || '';
+    if (pa !== pn) {
+      if (pa) logMov({ tipo: 'devolucion', rt: 't', rid: id, cant: 0, antes: 0, despues: 0, nota: 'Devuelta por ' + pa });
+      if (pn) logMov({ tipo: 'prestamo', rt: 't', rid: id, cant: 0, antes: 0, despues: 0, nota: 'Prestada a ' + pn });
+    }
+    $('#dlgHerr').close(); toast(isNew ? 'Herramienta registrada' : 'Herramienta actualizada');
+  } catch (err) { toast(err.message, 'bad'); }
+  finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+});
+$('#herrDel').addEventListener('click', async () => {
+  const id = S.editHerr, h = S.herr[id], u = usoHerr()[id] || [];
+  $('#dlgHerr').close();
+  if (!await confirmDlg('Eliminar herramienta', `¿Eliminar <b>${esc(h.nombre)}</b>?${u.length ? `<br><br>Se quitará de ${u.length} etapa(s) de proceso: ${u.map(x => esc(x.prod + ' › ' + x.paso)).join(', ')}.` : ''}`, 'Eliminar')) return;
+  const up = { ['herramientas/' + id]: null };
+  u.forEach(x => { up[`productos/${x.pid}/proceso/pasos/${x.sid}/herramientas/${id}`] = null; });
+  await db.ref().update(up); delImg(h.thumbId); toast('Herramienta eliminada');
+});
+
+/* ============================ PROCESOS ============================ */
+function renderProcs() {
+  const q = norm($('#procsQ').value);
+  const list = Object.entries(S.prod).filter(([, p]) => !q || norm([p.nombre, p.codigo].join(' ')).includes(q))
+    .sort((x, y) => (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'));
+  const mg = num(S.cfg.margenPct) > 0;
+  $('#procsTbl').innerHTML = list.length ? `<tr><th>Producto</th><th class="n">Etapas</th><th class="n">Lote</th><th class="n">Tiempo/und</th>${CATS.map(c => `<th class="n">${c[1]}</th>`).join('')}<th class="n">Costo/und</th>${mg ? '<th class="n">Precio sug.</th>' : ''}</tr>` +
+    list.map(([id, p]) => {
+      const c = costo(id), n = pasos(id).length;
+      return `<tr class="click" data-pid="${id}"><td><div class="nm" style="font-weight:500">${esc(p.nombre)}</div><div class="meta mono">${esc(p.codigo || '')}</div></td>
+        <td class="n">${n || '<span class="badge warn">sin proceso</span>'}</td><td class="n">${fmt(loteOf(id))}</td><td class="n">${fmtMin(c.min)}</td>
+        ${CATS.map(k => `<td class="n">${money(c[k[0]])}</td>`).join('')}<td class="n"><b>${money(c.total)}</b></td>${mg ? `<td class="n">${money(c.precio)}</td>` : ''}</tr>`;
+    }).join('') : '<tr><td class="empty">No hay productos. Crealos en la pestaña Productos.</td></tr>';
+}
+$('#procsQ').addEventListener('input', sched);
+$('#procsTbl').addEventListener('click', e => { const r = e.target.closest('[data-pid]'); if (r) openProc(r.dataset.pid); });
+$('#procsCsv').addEventListener('click', () => {
+  const rows = [['Producto', 'Codigo', 'Etapas', 'Lote', 'Min/und', ...CATS.map(c => c[1]), 'Costo/und', 'Precio sugerido']];
+  Object.entries(S.prod).forEach(([id, p]) => { const c = costo(id); rows.push([p.nombre, p.codigo, pasos(id).length, loteOf(id), r6(c.min), ...CATS.map(k => r6(c[k[0]])), r6(c.total), r6(c.precio)]); });
+  download('costos_productos.csv', toCSV(rows), 'text/csv');
+});
+function openProc(pid) { S.procP = pid; go('proc'); }
+
+function renderProc() {
+  const pid = S.procP, p = S.prod[pid];
+  if (!p) { go('procs'); return; }
+  const L = loteOf(pid), c = costo(pid, L), steps = c.steps;
+  $('#procName').textContent = p.nombre;
+  if (document.activeElement !== $('#procLote')) $('#procLote').value = L;
+  $('#procCount').textContent = steps.length + ' etapas';
+  $('#procLoteLbl').textContent = `Lote de ${fmt(L)} und`;
+  // --- flujo ---
+  const nb = Object.keys(p.bom || {}).length;
+  let h = `<div class="step"><div class="snum m">M</div><div class="sbody">
+    <div class="shead"><b>Materiales y subensambles</b><div class="sact"><button data-act="bom" title="Ver lista de materiales">↗</button></div></div>
+    <div class="sline"><span>${nb} componentes</span><span>Materiales <b>${money(c.matDir)}</b></span>${c.subs.length ? `<span>Subensambles <b>${money(c.subs.reduce((s, x) => s + x.tot, 0))}</b></span>` : ''}</div>
+    ${c.subs.length ? `<div class="sline">${c.subs.map(x => `<span>${esc(nameOf('p', x.id))} ×${fmt(x.q)} · <b>${money(x.tot)}</b> · ${fmtMin(x.min)}</span>`).join('')}</div>` : ''}
+  </div></div>`;
+  const lst = pasos(pid);
+  h += steps.map((s, i) => {
+    const st = s.st, tools = Object.keys(st.herramientas || {}), comps = Object.keys(st.comps || {}).filter(k => (p.bom || {})[k]);
+    const xs = Object.values(st.extras || {});
+    return `<div class="step" data-sid="${s.id}"><div class="snum">${i + 1}</div><div class="sbody">
+      <div class="shead"><b>${esc(st.nombre)}</b><div class="sact">
+        <button data-act="up" title="Subir"${i ? '' : ' disabled'}>↑</button><button data-act="down" title="Bajar"${i < steps.length - 1 ? '' : ' disabled'}>↓</button>
+        <button data-act="dup" title="Duplicar">⧉</button><button data-act="edit" title="Editar">✎</button><button data-act="del" title="Eliminar">✕</button></div></div>
+      ${st.descripcion ? `<div class="meta" style="white-space:normal">${esc(st.descripcion)}</div>` : ''}
+      <div class="sline"><span>Prep. <b>${fmtMin(num(st.tPrep))}</b>/lote</span><span>Ejec. <b>${fmtMin(num(st.tUnit))}</b>/und</span><span>Lote <b>${fmtMin(s.minLote)}</b></span></div>
+      <div class="sline"><span>${esc(inicioTxt(lst, i, c.crono))}</span><span>Inicia <b>${fmtMin(c.crono.res[s.id].s)}</b> · termina <b>${fmtMin(c.crono.res[s.id].e)}</b>${c.crono.crit.has(s.id) ? ' · <span class="badge warn">Ruta crítica</span>' : ''}</span></div>
+      <div class="sline"><span>${fmt(st.operarios === 0 ? 0 : (num(st.operarios) || 1))} × ${esc(roleName(st))} · <b>${money(roleRate(st))}</b>/h</span></div>
+      ${tools.length ? `<div class="tl">${tools.map(t => `<span class="badge" style="background:color-mix(in srgb,var(--c3) 16%,transparent);color:var(--ink)">${esc((S.herr[t] || {}).nombre || '(eliminada)')}</span>`).join('')}</div>` : ''}
+      ${comps.length ? `<div class="tl">${comps.map(k => `<span class="badge" style="background:color-mix(in srgb,var(--c1) 14%,transparent);color:var(--ink)">${esc(nameOf(p.bom[k].t, k))}</span>`).join('')}</div>` : ''}
+      ${xs.length ? `<div class="sline">${xs.map(x => `<span>${esc(x.concepto || 'Otro')} <b>${money(num(x.monto))}</b>/${x.por === 'lote' ? 'lote' : 'und'}</span>`).join('')}</div>` : ''}
+      <div class="scost">${money(s.tot)} <span class="lim" style="font-weight:400">/und · MO ${money(s.mo)} · Herr. ${money(s.herr)} · Otros ${money(s.otros)}</span></div>
+    </div></div>`;
+  }).join('');
+  if (!steps.length) h += `<div class="empty" style="padding:24px">Agregá la primera etapa del proceso (p. ej. preparación, soldadura, ensamble, prueba, empaque).</div>`;
+  $('#flow').innerHTML = h;
+  // --- KPIs ---
+  const mg = num(S.cfg.margenPct);
+  $('#procKpi').innerHTML = `
+    <div class="hero"><span>Costo por unidad</span><b>${money(c.total)}</b></div>
+    <div><span>Costo del lote</span><b>${money(c.total * L)}</b></div>
+    <div><span>Tiempo por unidad</span><b>${fmtMin(c.min)}</b></div>
+    <div><span>Duración del lote</span><b>${fmtMin(c.durLote)}</b></div>
+    <div><span>Horas de trabajo (lote)</span><b>${fmtMin(c.minLote)}</b></div>
+    ${mg ? `<div><span>Precio sugerido (+${fmt(mg)}%)</span><b>${money(c.precio)}</b></div>` : ''}`;
+  // --- barra apilada ---
+  const T = c.total;
+  $('#procBar').innerHTML = T > 0 ? CATS.filter(k => c[k[0]] > 0).map(k => `<i style="flex:${c[k[0]] / T} 1 0;background:var(${k[2]})" data-tip="${esc(k[1] + '|' + money(c[k[0]]) + ' por unidad|' + pct(c[k[0]], T) + ' del total')}"></i>`).join('') : '';
+  $('#procLeg').innerHTML = CATS.map(k => `<span><i style="background:var(${k[2]})"></i>${k[1]} <b>${pct(c[k[0]], T)}</b></span>`).join('');
+  // --- tabla desglose ---
+  const row = (lbl, v, cls = '') => `<tr class="${cls}"><td>${lbl}</td><td class="n">${money(v)}</td><td class="n">${money(v * L)}</td><td class="n">${pct(v, T)}</td></tr>`;
+  let t = `<tr><th>Concepto</th><th class="n">Por unidad</th><th class="n">Lote (${fmt(L)})</th><th class="n">%</th></tr>`;
+  t += row('Materiales directos', c.matDir);
+  c.subs.forEach(x => { t += row(`Subensamble: ${esc(nameOf('p', x.id))} ×${fmt(x.q)}`, x.tot); });
+  steps.forEach((s, i) => { t += row(`${i + 1}. ${esc(s.st.nombre)} <span class="lim">(MO ${money(s.mo)} · Herr. ${money(s.herr)} · Otros ${money(s.otros)})</span>`, s.tot); });
+  const ownInd = (c.matDir + steps.reduce((a, s) => a + s.tot, 0)) * num(S.cfg.indirectoPct) / 100;
+  t += row(`Indirectos (${fmt(num(S.cfg.indirectoPct))}%)`, ownInd);
+  t += row('<b>Costo total</b>', T, 'tot');
+  if (mg) t += row(`Precio sugerido (margen ${fmt(mg)}%)`, c.precio);
+  $('#procDesg').innerHTML = t;
+  // --- cronograma del lote ---
+  const cr = c.crono, tot = cr.end;
+  $('#ganttLbl').textContent = tot ? `Lote de ${fmt(L)} und · duración ${fmtMin(tot)} · trabajo ${fmtMin(cr.trabajo)}${cr.trabajo > tot + 1e-6 ? ' · ahorro por paralelo ' + fmtMin(cr.trabajo - tot) : ''}` : '';
+  $('#procGantt').innerHTML = steps.length && tot > 0 ? steps.map((s, i) => {
+    const r = cr.res[s.id], l = r.s / tot * 100, w = r.d / tot * 100, we = (r.e - r.s - r.d) / tot * 100, crit = cr.crit.has(s.id);
+    const right = (r.e / tot * 100);
+    return `<div class="gl" title="${esc(s.st.nombre)}">${i + 1}. ${esc(s.st.nombre)}</div><div class="gt">${num(s.st.espera) ? `<b style="left:${(r.s - num(s.st.espera)) / tot * 100}%"></b>` : ''}<i class="${crit ? 'crit' : ''}" style="left:${l}%;width:${w}%" data-tip="${esc(s.st.nombre + '|' + inicioTxt(lst, i, cr) + '|Inicio ' + fmtMin(r.s) + ' · fin ' + fmtMin(r.e) + '|Duración ' + fmtMin(r.d) + (we > 0 ? ' + espera última unidad ' + fmtMin(r.e - r.s - r.d) : '') + (crit ? '|Ruta crítica' : ''))}"></i>${we > 0 ? `<u style="left:${l + w}%;width:${we}%"></u>` : ''}<span class="gv" style="${right > 72 ? `right:${100 - l}%;padding-right:6px;padding-left:0` : `left:${right}%`}">${fmtMin(r.d)}</span></div>`;
+  }).join('') + `<div></div><div class="vleg" style="margin-top:6px"><span><i style="background:var(--c2)"></i>Ruta crítica</span><span><i style="background:var(--c1)"></i>Con holgura</span><span><i style="background:none;border-top:2px dotted var(--mute);border-radius:0;height:0"></i>Espera de la última unidad</span></div>` : '<div class="lim" style="grid-column:1/-1">Sin tiempos definidos.</div>';
+}
+$('#procBack').addEventListener('click', () => go('procs'));
+$('#procProd').addEventListener('click', () => { S.nDiag = 1; $('#diagN').value = 1; S.collapsed.clear(); go('det', S.procP); });
+$('#procLote').addEventListener('change', e => { const v = Math.max(1, Math.floor(num(e.target.value)) || 1); db.ref(`productos/${S.procP}/proceso/lote`).set(v); });
+$('#procCfg').addEventListener('click', openCfg);
+$('#cfgBtn').addEventListener('click', openCfg);
+$('#stepAdd').addEventListener('click', () => openStep(null));
+$('#flow').addEventListener('click', async e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act, pid = S.procP;
+  if (act === 'bom') { S.nDiag = 1; $('#diagN').value = 1; S.collapsed.clear(); go('det', pid); return; }
+  const sid = b.closest('[data-sid]').dataset.sid, list = pasos(pid), i = list.findIndex(x => x[0] === sid);
+  const base = `productos/${pid}/proceso/pasos/`;
+  if (act === 'edit') openStep(sid);
+  if (act === 'del') {
+    if (!await confirmDlg('Eliminar etapa', `¿Eliminar la etapa <b>${esc(list[i][1].nombre)}</b>?`, 'Eliminar')) return;
+    const up = { [base + sid]: null };
+    list.forEach(([k, x]) => { if (x.deps && x.deps[sid]) up[`${base}${k}/deps/${sid}`] = null; });
+    db.ref().update(up);
+  }
+  if (act === 'dup') { const o = JSON.parse(JSON.stringify(list[i][1])); o.nombre += ' (copia)'; o.orden = num(o.orden) + 0.5; await db.ref(base + db.ref().push().key).set(o); renumber(pid); }
+  if (act === 'up' || act === 'down') {
+    const j = act === 'up' ? i - 1 : i + 1; if (j < 0 || j >= list.length) return;
+    const ord = list.map(x => x[0]); [ord[i], ord[j]] = [ord[j], ord[i]];
+    const up = {}; ord.forEach((k, n) => { up[base + k + '/orden'] = n + 1; }); db.ref().update(up);
+  }
+});
+function renumber(pid) {
+  const up = {}; pasos(pid).forEach(([k], n) => { up[`productos/${pid}/proceso/pasos/${k}/orden`] = n + 1; });
+  if (Object.keys(up).length) db.ref().update(up);
+}
+$('#procCsv').addEventListener('click', () => {
+  const pid = S.procP, p = S.prod[pid], L = loteOf(pid), c = costo(pid, L);
+  const rows = [['Producto', p.nombre], ['Lote', L], [], ['Concepto', 'Rol', 'Operarios', 'Prep min/lote', 'Ejec min/und', 'Min/und', 'Mano de obra/und', 'Herramientas/und', 'Otros/und', 'Total/und', 'Total lote']];
+  rows.push(['Materiales directos', '', '', '', '', '', '', '', '', r6(c.matDir), r6(c.matDir * L)]);
+  c.subs.forEach(x => rows.push(['Subensamble: ' + nameOf('p', x.id) + ' x' + x.q, '', '', '', '', r6(x.min), '', '', '', r6(x.tot), r6(x.tot * L)]));
+  c.steps.forEach((s, i) => rows.push([(i + 1) + '. ' + s.st.nombre, roleName(s.st), s.st.operarios ?? 1, num(s.st.tPrep), num(s.st.tUnit), r6(s.minU), r6(s.mo), r6(s.herr), r6(s.otros), r6(s.tot), r6(s.tot * L)]));
+  rows.push([], ['Cronograma (min)', 'Inicio', 'Fin', 'Duracion', 'Ruta critica']);
+  c.steps.forEach((s, i) => { const r = c.crono.res[s.id]; rows.push([(i + 1) + '. ' + s.st.nombre, r6(r.s), r6(r.e), r6(r.d), c.crono.crit.has(s.id) ? 'si' : '']); });
+  rows.push(['Duracion del lote', '', r6(c.durLote)]);
+  rows.push([], ...CATS.map(k => [k[1], '', '', '', '', '', '', '', '', r6(c[k[0]]), r6(c[k[0]] * L)]));
+  rows.push(['COSTO TOTAL', '', '', '', '', r6(c.min), '', '', '', r6(c.total), r6(c.total * L)], ['Precio sugerido', '', '', '', '', '', '', '', '', r6(c.precio), r6(c.precio * L)]);
+  download(`desglose_${(p.codigo || p.nombre).replace(/\W+/g, '_')}.csv`, toCSV(rows), 'text/csv');
+});
+
+/* ---- diálogo etapa ---- */
+function openStep(sid) {
+  const pid = S.procP, st = sid ? (procOf(pid).pasos || {})[sid] : null, f = $('#fStep');
+  S.editStep = sid; f.reset();
+  $('#stepTitle').textContent = st ? 'Editar etapa' : 'Nueva etapa';
+  const rs = Object.entries(roles()).sort((a, b) => (a[1].nombre || '').localeCompare(b[1].nombre || '', 'es'));
+  $('#stepRol').innerHTML = rs.map(([k, r]) => `<option value="${k}">${esc(r.nombre)} — ${money(num(r.costoHora))}/h</option>`).join('') + '<option value="_m">Tarifa manual</option>';
+  if (st) { ['nombre', 'descripcion', 'tPrep', 'tUnit', 'operarios', 'tarifa'].forEach(k => { if (st[k] != null) f.elements[k].value = st[k]; }); }
+  f.elements.rol.value = st ? (st.rol && (st.rol === '_m' || roles()[st.rol]) ? st.rol : '_m') : (rs[0] ? rs[0][0] : '_m');
+  S.stepTools = new Set(Object.keys((st && st.herramientas) || {}));
+  S.stepComps = new Set(Object.keys((st && st.comps) || {}));
+  S.stepDeps = {}; Object.entries((st && st.deps) || {}).forEach(([k, d]) => { S.stepDeps[k] = num(d && d.pct); });
+  f.elements.inicio.value = (st && st.inicio) || 'serie'; f.elements.espera.value = st ? num(st.espera) : 0;
+  $('#stepHQ').value = '';
+  $('#stepX').innerHTML = ''; Object.values((st && st.extras) || {}).forEach(addX);
+  renderStepTools(); renderStepComps(); renderStepDeps(); updStep();
+  $('#dlgStep').showModal();
+}
+function renderStepTools() {
+  const q = norm($('#stepHQ').value);
+  const list = Object.entries(S.herr).filter(([id, h]) => S.stepTools.has(id) || !q || norm([h.nombre, h.codigo, h.categoria].join(' ')).includes(q))
+    .sort((x, y) => (S.stepTools.has(y[0]) - S.stepTools.has(x[0])) || (x[1].nombre || '').localeCompare(y[1].nombre || '', 'es'));
+  $('#stepHerr').innerHTML = list.length ? list.map(([id, h]) => `<label class="chk"><input type="checkbox" data-h="${id}"${S.stepTools.has(id) ? ' checked' : ''}>
+    <span style="flex:1;min-width:0"><span class="nm" style="font-weight:500">${esc(h.nombre)}</span> <span class="lim">${esc(h.ubicacion || '')}</span></span>
+    <span class="mono lim">${toolRate(id) ? money(toolRate(id)) + '/h' : '—'}</span>${h.estado && h.estado !== 'operativa' ? ` <span class="badge ${ESTADOS[h.estado][1]}">${ESTADOS[h.estado][0]}</span>` : ''}</label>`).join('')
+    : '<div class="lim" style="padding:12px">No hay herramientas registradas. Agregalas en la pestaña Herramientas.</div>';
+}
+function renderStepDeps() {
+  const pid = S.procP, list = pasos(pid), me = S.editStep, mode = $('#stepIni').value;
+  $('#stepDeps').classList.toggle('hide', mode !== 'deps'); $('#stepDepsHint').classList.toggle('hide', mode !== 'deps');
+  const others = list.filter(([k]) => k !== me);
+  $('#stepDeps').innerHTML = others.length ? others.map(([k, x]) => {
+    const cyc = me && dependsOn(list, k, me), on = k in S.stepDeps && !cyc;
+    return `<div class="deprow${cyc ? ' off' : ''}" title="${cyc ? 'No disponible: esa etapa depende de esta' : ''}">
+      <input type="checkbox" data-dep="${k}"${on ? ' checked' : ''}${cyc ? ' disabled' : ''}>
+      <span>${fmt(list.findIndex(y => y[0] === k) + 1)}. ${esc(x.nombre)}${cyc ? ' <span class="lim">(depende de esta)</span>' : ''}</span>
+      <span class="pc"><input class="inp mono" type="number" min="0" max="100" step="5" data-pct="${k}" value="${on ? S.stepDeps[k] : 100}"${on ? '' : ' disabled'}><span class="lim">%</span></span></div>`;
+  }).join('') : '<div class="lim" style="padding:12px">No hay otras etapas. Esta inicia al comienzo del lote.</div>';
+}
+function renderStepComps() {
+  const p = S.prod[S.procP] || {}, list = Object.entries(p.bom || {});
+  $('#stepComp').innerHTML = list.length ? list.map(([k, c]) => `<label class="chk"><input type="checkbox" data-c="${k}"${S.stepComps.has(k) ? ' checked' : ''}>
+    <span style="flex:1">${esc(nameOf(c.t, k))}${c.t === 'p' ? ' <span class="badge acc">SUB</span>' : ''}</span><span class="mono lim">×${fmt(c.q)}</span></label>`).join('')
+    : '<div class="lim" style="padding:12px">El producto aún no tiene lista de materiales.</div>';
+}
+function addX(x = {}) {
+  const d = document.createElement('div'); d.className = 'xrow';
+  d.innerHTML = `<input class="inp" data-x="concepto" placeholder="Concepto (p. ej. estaño, flux, envío PCB)" value="${esc(x.concepto || '')}">
+    <input class="inp mono" data-x="monto" type="number" step="any" min="0" placeholder="Monto" value="${x.monto ?? ''}">
+    <select class="inp" data-x="por"><option value="und">por und</option><option value="lote"${x.por === 'lote' ? ' selected' : ''}>por lote</option></select>
+    <button type="button" class="btn sm ghost danger" data-xrm title="Quitar">✕</button>`;
+  $('#stepX').appendChild(d);
+}
+function readStep() {
+  const E = $('#fStep').elements, extras = {};
+  $$('#stepX .xrow').forEach((r, i) => {
+    const concepto = $('[data-x=concepto]', r).value.trim(), monto = num($('[data-x=monto]', r).value);
+    if (concepto || monto) extras['x' + i] = { concepto, monto, por: $('[data-x=por]', r).value };
+  });
+  const toObj = s => { const o = {}; s.forEach(k => { o[k] = true; }); return o; };
+  return {
+    nombre: E.nombre.value.trim(), descripcion: E.descripcion.value.trim(),
+    tPrep: num(E.tPrep.value), tUnit: num(E.tUnit.value), rol: E.rol.value,
+    operarios: E.operarios.value === '' ? 1 : Math.max(0, Math.floor(num(E.operarios.value))), tarifa: num(E.tarifa.value),
+    herramientas: toObj(S.stepTools), comps: toObj(S.stepComps), extras,
+    inicio: E.inicio.value, espera: num(E.espera.value),
+    deps: E.inicio.value === 'deps' ? Object.fromEntries(Object.entries(S.stepDeps).map(([k, v]) => [k, { pct: Math.min(100, Math.max(0, num(v))) }])) : null
+  };
+}
+function updStep() {
+  const st = readStep(), L = loteOf(S.procP), c = stepCost(st, L);
+  $('#stepTarF').classList.toggle('hide', st.rol !== '_m');
+  $('#stepPrev').innerHTML = `${money(c.tot)} <span class="lim">/und (lote ${fmt(L)}) · MO ${money(c.mo)} · Herr. ${money(c.herr)} · Otros ${money(c.otros)} · ${fmtMin(c.minU)}/und</span>`;
+}
+$('#fStep').addEventListener('input', updStep);
+$('#fStep').addEventListener('change', e => {
+  if (e.target.dataset.h) { e.target.checked ? S.stepTools.add(e.target.dataset.h) : S.stepTools.delete(e.target.dataset.h); updStep(); }
+  if (e.target.dataset.c) { e.target.checked ? S.stepComps.add(e.target.dataset.c) : S.stepComps.delete(e.target.dataset.c); }
+  if (e.target.dataset.dep) { const k = e.target.dataset.dep; if (e.target.checked) S.stepDeps[k] = num($(`[data-pct="${k}"]`).value || 100); else delete S.stepDeps[k]; renderStepDeps(); }
+  if (e.target.dataset.pct) { const k = e.target.dataset.pct; if (k in S.stepDeps) S.stepDeps[k] = Math.min(100, Math.max(0, num(e.target.value))); }
+  if (e.target.id === 'stepIni') renderStepDeps();
+});
+$('#stepHQ').addEventListener('input', renderStepTools);
+$('#stepXAdd').addEventListener('click', () => { addX(); $('#stepX .xrow:last-child input').focus(); });
+$('#stepX').addEventListener('click', e => { if (e.target.closest('[data-xrm]')) { e.target.closest('.xrow').remove(); updStep(); } });
+$('#fStep').addEventListener('submit', async e => {
+  e.preventDefault();
+  const st = readStep(); if (!st.nombre) return;
+  const pid = S.procP, sid = S.editStep || db.ref().push().key;
+  const prev = (procOf(pid).pasos || {})[sid];
+  st.orden = prev ? num(prev.orden) : pasos(pid).reduce((m, [, x]) => Math.max(m, num(x.orden)), 0) + 1;
+  try { await db.ref(`productos/${pid}/proceso/pasos/${sid}`).set(st); $('#dlgStep').close(); toast(prev ? 'Etapa actualizada' : 'Etapa agregada'); }
+  catch (err) { toast(err.message, 'bad'); }
+});
+
+/* ---- diálogo tarifas ---- */
+function addRole(id, r = {}) {
+  const d = document.createElement('div'); d.className = 'rrow'; d.dataset.rid = id || db.ref().push().key;
+  d.innerHTML = `<input class="inp" data-r="nombre" placeholder="Rol (p. ej. Técnico electrónico)" value="${esc(r.nombre || '')}">
+    <input class="inp mono" data-r="costoHora" type="number" step="any" min="0" placeholder="Costo/h" value="${r.costoHora ?? ''}">
+    <button type="button" class="btn sm ghost danger" data-rrm title="Quitar">✕</button>`;
+  $('#cfgRoles').appendChild(d);
+}
+function openCfg() {
+  const f = $('#fCfg'); f.reset(); $('#cfgRoles').innerHTML = '';
+  const rs = Object.entries(roles());
+  rs.length ? rs.forEach(([k, r]) => addRole(k, r)) : addRole(null, { nombre: 'Técnico' });
+  f.elements.indirectoPct.value = num(S.cfg.indirectoPct); f.elements.margenPct.value = num(S.cfg.margenPct);
+  $('#dlgCfg').showModal();
+}
+$('#cfgRoleAdd').addEventListener('click', () => { addRole(); $('#cfgRoles .rrow:last-child input').focus(); });
+$('#cfgRoles').addEventListener('click', e => { if (e.target.closest('[data-rrm]')) e.target.closest('.rrow').remove(); });
+$('#fCfg').addEventListener('submit', async e => {
+  e.preventDefault();
+  const rolesObj = {};
+  $$('#cfgRoles .rrow').forEach(r => { const n = $('[data-r=nombre]', r).value.trim(); if (n) rolesObj[r.dataset.rid] = { nombre: n, costoHora: num($('[data-r=costoHora]', r).value) }; });
+  const E = e.target.elements;
+  try { await db.ref('config').update({ roles: rolesObj, indirectoPct: num(E.indirectoPct.value), margenPct: num(E.margenPct.value) }); $('#dlgCfg').close(); toast('Tarifas guardadas'); }
+  catch (err) { toast(err.message, 'bad'); }
+});
+
 /* ============================ menú usuario ============================ */
 $('#umenu').addEventListener('click', async e => {
   const b = e.target.closest('[data-m]'); if (!b) return; $('#umenu').open = false;
   const m = b.dataset.m;
   if (m === 'out') { auth.signOut(); location.reload(); }
-  if (m === 'json') download(`inventario_${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ articulos: S.art, productos: S.prod, stock: S.stock }, null, 1), 'application/json');
+  if (m === 'json') download(`inventario_${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ articulos: S.art, productos: S.prod, stock: S.stock, herramientas: S.herr, config: S.cfg }, null, 1), 'application/json');
   if (m === 'backup') { toast('Respaldando en Drive…'); try { const r = await gas('backup'); toast('Respaldo guardado: ' + r.name); } catch (err) { toast(err.message, 'bad'); } }
   if (m === 'csvexp' && S.invSec === 'pt' && S.view === 'inv') {
     const rows = [['producto', 'codigo', 'categoria', 'stock', 'costoUnitMateriales', 'valor']];
@@ -1216,6 +1917,8 @@ function startApp() {
   $('#invGrid').innerHTML = '<div class="empty">Cargando inventario…</div>';
   db.ref('articulos').on('value', s => { S.art = s.val() || {}; S.loaded.art = true; sched(); });
   db.ref('productos').on('value', s => { S.prod = s.val() || {}; S.loaded.prod = true; sched(); });
+  db.ref('herramientas').on('value', s => { S.herr = s.val() || {}; sched(); });
+  db.ref('config').on('value', s => { S.cfg = s.val() || {}; sched(); });
   db.ref('stock').on('value', s => { const v = s.val() || {}; S.stock = { a: v.a || {}, p: v.p || {} }; S.loaded.stock = true; sched(); });
   db.ref('movimientos').orderByChild('t').limitToLast(500).on('value', s => {
     const arr = []; s.forEach(c => { arr.push({ id: c.key, ...c.val() }); }); S.mov = arr.reverse(); if (S.view === 'mov') renderMov();
